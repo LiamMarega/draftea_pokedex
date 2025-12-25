@@ -1,6 +1,13 @@
 part of 'pokedex_cubit.dart';
 
+enum PokemonListStatus { initial, loading, success, failure }
+
 @freezed
-class PokedexState with _$PokedexState {
-  const factory PokedexState.initial() = _Initial;
+abstract class PokedexState with _$PokedexState {
+  const factory PokedexState({
+    required ScrollController scrollController,
+    @Default(PokemonListStatus.initial) PokemonListStatus status,
+    @Default([]) List<PokemonDetail> pokemons,
+    String? errorMessage,
+  }) = _PokedexState;
 }
