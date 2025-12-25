@@ -14,14 +14,11 @@ class PokedexCubit extends Cubit<PokedexState> {
         ),
       );
 
-  // Ejemplo de cómo usar el estado:
   Future<void> fetchPokemons() async {
-    // 1. Cambiar a estado de carga manteniendo los pokemons actuales
     emit(state.copyWith(status: PokemonListStatus.loading));
 
     try {
-      // Supongamos que traes una lista de pokemons
-      final newPokemons = <PokemonDetail>[]; // Tu lógica de API aquí
+      final newPokemons = <PokemonDetail>[];
 
       // 2. Actualizar con éxito
       emit(
@@ -33,7 +30,6 @@ class PokedexCubit extends Cubit<PokedexState> {
         ),
       );
     } catch (e) {
-      // 3. Manejar error
       emit(
         state.copyWith(
           status: PokemonListStatus.failure,
