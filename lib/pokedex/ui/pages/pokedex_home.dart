@@ -15,7 +15,7 @@ class PokedexHomePage extends StatelessWidget {
             const Text('Pokedex'),
             ElevatedButton(
               onPressed: () {
-                context.go(PokedexRoutes.detail);
+                context.push(PokedexRoutes.detail);
               },
               child: const Text('Go to Pokemon Details'),
             ),
