@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PokedexHome extends StatelessWidget {
-  const PokedexHome({super.key});
+class PokedexHomePage extends StatelessWidget {
+  const PokedexHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

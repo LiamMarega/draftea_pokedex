@@ -3,6 +3,7 @@ analyzer:
   errors:
     invalid_annotation_target: ignore
     avoid_catches_without_on_clauses: ignore
+    discarded_futures: ignore
   exclude:
     - lib/l10n/gen/*
 linter:
