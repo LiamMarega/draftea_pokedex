@@ -1,5 +1,5 @@
+import 'package:draftea_pokedex/core/router/route.dart';
 import 'package:draftea_pokedex/pokedex/ui/cubit/pokedex_cubit.dart';
-import 'package:draftea_pokedex/pokedex/ui/pages/pokedex_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -12,14 +12,14 @@ class App extends StatelessWidget {
     return BlocProvider(
       create: (_) => GetIt.I<PokedexCubit>()..fetchPokemons(),
 
-      child: MaterialApp(
+      child: MaterialApp.router(
+        routerConfig: router,
         theme: ThemeData(
           appBarTheme: AppBarTheme(
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           ),
           useMaterial3: true,
         ),
-        home: const PokedexHomePage(),
       ),
     );
   }
