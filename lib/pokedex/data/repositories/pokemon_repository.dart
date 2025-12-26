@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_list_response.dart';
 import 'package:draftea_pokedex/pokedex/domain/repositories/pokemon_repository.dart';
 import 'package:injectable/injectable.dart';
