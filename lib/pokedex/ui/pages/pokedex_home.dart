@@ -1,3 +1,4 @@
+import 'package:draftea_pokedex/core/widgets/pokedex_appbar.dart';
 import 'package:draftea_pokedex/pokedex/ui/cubit/pokedex_cubit.dart';
 import 'package:draftea_pokedex/pokedex/ui/widgets/pokemon_card.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ class PokedexHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const PokedexAppBar(),
       body: BlocBuilder<PokedexCubit, PokedexState>(
         builder: (context, state) {
           switch (state.status) {
