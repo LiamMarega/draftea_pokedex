@@ -8,6 +8,9 @@ abstract class PokedexState with _$PokedexState {
     required ScrollController scrollController,
     @Default(PokemonListStatus.initial) PokemonListStatus status,
     @Default([]) List<PokemonDetail> pokemons,
+    @Default(false) bool hasReachedMax,
+    @Default(0) int currentOffset,
+
     String? errorMessage,
   }) = _PokedexState;
 }
