@@ -1,4 +1,5 @@
 import 'package:draftea_pokedex/pokedex/ui/cubit/pokedex_cubit.dart';
+import 'package:draftea_pokedex/pokedex/ui/widgets/pokemon_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
@@ -23,7 +24,9 @@ class PokedexHomePage extends StatelessWidget {
                 minItemWidth: 300,
                 minItemsPerRow: 2,
                 maxItemsPerRow: 5,
-                gridItems: state.pokemons.map((e) => Text(e.name)).toList(),
+                gridItems: state.pokemons
+                    .map((pokemon) => PokemonCard(pokemon: pokemon))
+                    .toList(),
                 builder: (context, items) {
                   return SingleChildScrollView(
                     controller: state.scrollController,
