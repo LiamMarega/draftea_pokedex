@@ -1,6 +1,4 @@
-import 'package:draftea_pokedex/core/router/route.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 class PokedexHomePage extends StatelessWidget {
