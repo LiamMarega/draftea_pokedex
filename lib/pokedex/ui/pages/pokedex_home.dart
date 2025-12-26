@@ -8,19 +8,13 @@ class PokedexHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Pokedex'),
-            ElevatedButton(
-              onPressed: () {
-                context.push(PokedexRoutes.detail);
-              },
-              child: const Text('Go to Pokemon Details'),
-            ),
-          ],
+      body: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
         ),
+        itemBuilder: (context, index) {
+          return const Text('Pokemon');
+        },
       ),
     );
   }
