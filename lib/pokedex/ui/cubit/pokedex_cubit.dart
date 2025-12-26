@@ -1,26 +1,45 @@
 import 'package:bloc/bloc.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
+import 'package:draftea_pokedex/pokedex/domain/repositories/pokemon_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
+
+import 'package:draftea_pokedex/pokedex/data/models/sprites.dart';
 
 part 'pokedex_state.dart';
 part 'pokedex_cubit.freezed.dart';
 
+@injectable
 class PokedexCubit extends Cubit<PokedexState> {
-  PokedexCubit()
+  PokedexCubit(this._repository)
     : super(
         PokedexState(
           scrollController: ScrollController(),
         ),
       );
 
+  final IPokemonRepository _repository;
+
   Future<void> fetchPokemons() async {
     emit(state.copyWith(status: PokemonListStatus.loading));
 
     try {
-      final newPokemons = <PokemonDetail>[];
+      final response = await _repository.getPokemonList();
+      final newPokemons = response.results
+          .map(
+            (r) => PokemonDetail(
+              id: int.parse(r.url.split('/').where((e) => e.isNotEmpty).last),
+              name: r.name,
+              sprites: Sprites(
+                frontDefault:
+                    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${r.url.split('/').where((e) => e.isNotEmpty).last}.png',
+              ),
+              abilities: [],
+            ),
+          )
+          .toList();
 
-      // 2. Actualizar con éxito
       emit(
         state.copyWith(
           status: PokemonListStatus.success,
