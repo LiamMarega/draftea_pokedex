@@ -3,14 +3,13 @@ import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 import 'package:flutter/material.dart';
 
 class PokemonDetailsPage extends StatelessWidget {
-  final PokemonDetail pokemon;
-  final int id;
-
   const PokemonDetailsPage({
     required this.pokemon,
     required this.id,
     super.key,
   });
+  final PokemonDetail pokemon;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
