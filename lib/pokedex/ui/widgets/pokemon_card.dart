@@ -30,12 +30,12 @@ class PokemonCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: baseColor.withOpacity(0.5),
+              color: baseColor.withValues(alpha: 0.5),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -44,11 +44,11 @@ class PokemonCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              baseColor.withOpacity(0.8),
+              baseColor.withValues(alpha: 0.8),
               baseColor,
-              Colors.white.withOpacity(0.4), // Metallic shine
+              Colors.white.withValues(alpha: 0.4), // Metallic shine
               baseColor,
-              baseColor.withOpacity(0.9),
+              baseColor.withValues(alpha: 0.9),
             ],
             stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
           ),
@@ -64,9 +64,9 @@ class PokemonCard extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.white.withOpacity(0.1),
-                      Colors.white.withOpacity(0.0),
-                      Colors.white.withOpacity(0.1),
+                      Colors.white.withValues(alpha: 0.1),
+                      Colors.white.withValues(alpha: 0.0),
+                      Colors.white.withValues(alpha: 0.1),
                     ],
                     stops: const [0.0, 0.5, 1.0],
                   ),
@@ -87,7 +87,7 @@ class PokemonCard extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
+                              color: Colors.black.withValues(alpha: 0.3),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -114,14 +114,14 @@ class PokemonCard extends StatelessWidget {
                     horizontal: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(14),
                       bottomRight: Radius.circular(14),
                     ),
                     border: Border(
                       top: BorderSide(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),

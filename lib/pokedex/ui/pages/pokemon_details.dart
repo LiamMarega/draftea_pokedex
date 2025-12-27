@@ -42,7 +42,7 @@ class PokemonDetailsPage extends StatelessWidget {
             Text(
               pokemon.formattedId,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
@@ -60,7 +60,7 @@ class PokemonDetailsPage extends StatelessWidget {
             child: Image.asset(
               'assets/images/pokedex-bg.png',
               fit: BoxFit.cover,
-              opacity: const AlwaysStoppedAnimation(.3),
+              opacity: const AlwaysStoppedAnimation(.7),
             ),
           ),
           // Gradient Header Background
@@ -76,7 +76,7 @@ class PokemonDetailsPage extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     baseColor,
-                    baseColor.withOpacity(0.8),
+                    baseColor.withValues(alpha: 0.8),
                     Colors.transparent,
                   ],
                 ),
@@ -100,12 +100,12 @@ class PokemonDetailsPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(32),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                         width: 4,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: baseColor.withOpacity(0.4),
+                          color: baseColor.withValues(alpha: 0.4),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -114,11 +114,11 @@ class PokemonDetailsPage extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          baseColor.withOpacity(0.8),
+                          baseColor.withValues(alpha: 0.8),
                           baseColor,
-                          Colors.white.withOpacity(0.4), // Metallic shine
+                          Colors.white.withValues(alpha: 0.4), // Metallic shine
                           baseColor,
-                          baseColor.withOpacity(0.9),
+                          baseColor.withValues(alpha: 0.9),
                         ],
                         stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
                       ),
@@ -134,9 +134,9 @@ class PokemonDetailsPage extends StatelessWidget {
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  Colors.white.withOpacity(0.15),
-                                  Colors.white.withOpacity(0.0),
-                                  Colors.white.withOpacity(0.15),
+                                  Colors.white.withValues(alpha: 0.15),
+                                  Colors.white.withValues(alpha: 0.0),
+                                  Colors.white.withValues(alpha: 0.15),
                                 ],
                                 stops: const [0.0, 0.5, 1.0],
                               ),
@@ -152,7 +152,7 @@ class PokemonDetailsPage extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.25),
+                                    color: Colors.black.withValues(alpha: 0.25),
                                     blurRadius: 30,
                                     offset: const Offset(0, 15),
                                   ),
@@ -190,7 +190,7 @@ class PokemonDetailsPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -219,12 +219,12 @@ class PokemonDetailsPage extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: ability.isHidden
                                   ? Colors.grey[100]
-                                  : baseColor.withOpacity(0.1),
+                                  : baseColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: ability.isHidden
                                     ? Colors.grey[300]!
-                                    : baseColor.withOpacity(0.3),
+                                    : baseColor.withValues(alpha: 0.3),
                               ),
                             ),
                             child: Row(
@@ -300,9 +300,9 @@ class _SpriteThumbnail extends StatelessWidget {
       width: 90,
       height: 90,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: CachedNetworkImage(
         imageUrl: url,
