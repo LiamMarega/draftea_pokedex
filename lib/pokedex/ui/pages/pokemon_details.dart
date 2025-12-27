@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:draftea_pokedex/core/utils/colors.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 import 'package:flutter/material.dart';
 
@@ -46,7 +47,11 @@ class PokemonDetailsPage extends StatelessWidget {
               aspectRatio: 1,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: pokemon.types.isNotEmpty
+                      ? PokedexColors.getColorByType(
+                          pokemon.types.first.type.name,
+                        )
+                      : Colors.grey[100],
                   borderRadius: BorderRadius.circular(24),
                 ),
                 padding: const EdgeInsets.all(32),
