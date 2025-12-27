@@ -3,7 +3,9 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:draftea_pokedex/core/di/injection.dart';
+import 'package:draftea_pokedex/hive_registrar.g.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 
 class AppBlocObserver extends BlocObserver {
   const AppBlocObserver();
@@ -27,6 +29,8 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   };
 
   Bloc.observer = const AppBlocObserver();
+  await Hive.initFlutter();
+  Hive.registerAdapters();
 
   configureDependencies();
 

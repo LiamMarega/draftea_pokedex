@@ -21,11 +21,11 @@ final router = GoRouter(
     GoRoute(
       path: PokedexRoutes.detail,
       builder: (context, state) {
-        final id = int.parse(state.pathParameters['id']!);
+        final id = state.pathParameters['id']!;
         final pokemon = state.extra as PokemonDetail?;
         if (pokemon == null) {
-          return const Scaffold(
-            body: Center(child: Text('Pokemon not found')),
+          return Scaffold(
+            body: Center(child: Text('Pokemon $id not found')),
           );
         }
         return PokemonDetailsPage(id: pokemon.id, pokemon: pokemon);
