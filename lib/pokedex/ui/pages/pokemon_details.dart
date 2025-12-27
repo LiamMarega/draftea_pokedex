@@ -40,88 +40,94 @@ class PokemonDetailsPage extends StatelessWidget {
               final useSideBySide = isWide || isLandscape;
 
               // Pokemon Image Card Widget
-              final imageCard = AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(32),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.6),
-                      width: 4,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: baseColor.withValues(alpha: 0.8),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
+              final imageCard = Container(
+                constraints: useSideBySide
+                    ? null
+                    : const BoxConstraints(minHeight: 300),
+                child: AspectRatio(
+                  aspectRatio: useSideBySide ? 0.8 : 1.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.6),
+                        width: 4,
                       ),
-                    ],
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        baseColor.withValues(alpha: 0.1),
-                        baseColor,
-                        Colors.white.withValues(alpha: 0.4),
-                        baseColor,
-                        baseColor.withValues(alpha: 0.9),
-                      ],
-                      stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
-                    ),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(28),
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white.withValues(alpha: 0.15),
-                                Colors.white.withValues(alpha: 0.0),
-                                Colors.white.withValues(alpha: 0.15),
-                              ],
-                              stops: const [0.0, 0.5, 1.0],
-                            ),
-                          ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: baseColor.withValues(alpha: 0.8),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
                         ),
+                      ],
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          baseColor.withValues(alpha: 0.1),
+                          baseColor,
+                          Colors.white.withValues(alpha: 0.4),
+                          baseColor,
+                          baseColor.withValues(alpha: 0.9),
+                        ],
+                        stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(40),
-                        child: Hero(
-                          tag: 'pokemon-${pokemon.id}',
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned.fill(
                           child: Container(
                             decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.25),
-                                  blurRadius: 30,
-                                  offset: const Offset(0, 15),
-                                ),
-                              ],
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: pokemon.imageUrl,
-                              fit: BoxFit.contain,
-                              placeholder: (context, url) => const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              errorWidget: (context, url, error) => const Icon(
-                                Icons.error,
-                                size: 48,
-                                color: Colors.white,
+                              borderRadius: BorderRadius.circular(28),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.white.withValues(alpha: 0.15),
+                                  Colors.white.withValues(alpha: 0.0),
+                                  Colors.white.withValues(alpha: 0.15),
+                                ],
+                                stops: const [0.0, 0.5, 1.0],
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.all(40),
+                          child: Hero(
+                            tag: 'pokemon-${pokemon.id}',
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.25),
+                                    blurRadius: 30,
+                                    offset: const Offset(0, 15),
+                                  ),
+                                ],
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl: pokemon.imageUrl,
+                                fit: BoxFit.contain,
+                                placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(
+                                      Icons.error,
+                                      size: 48,
+                                      color: Colors.white,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -142,7 +148,9 @@ class PokemonDetailsPage extends StatelessWidget {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: useSideBySide
+                      ? MainAxisSize.max
+                      : MainAxisSize.min,
                   children: [
                     Text(
                       'Abilities',
@@ -273,20 +281,22 @@ class PokemonDetailsPage extends StatelessWidget {
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 1000),
                             child: useSideBySide
-                                ? Row(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .center, // Center vertically in landscape
-                                    children: [
-                                      Expanded(
-                                        flex: 5,
-                                        child: imageCard,
-                                      ),
-                                      const SizedBox(width: 48),
-                                      Expanded(
-                                        flex: 6,
-                                        child: detailsCard,
-                                      ),
-                                    ],
+                                ? IntrinsicHeight(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Expanded(
+                                          flex: 5,
+                                          child: imageCard,
+                                        ),
+                                        const SizedBox(width: 48),
+                                        Expanded(
+                                          flex: 6,
+                                          child: detailsCard,
+                                        ),
+                                      ],
+                                    ),
                                   )
                                 : Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -325,8 +335,6 @@ class _SpriteThumbnail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 90,
-      height: 90,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
