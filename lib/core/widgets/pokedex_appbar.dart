@@ -50,10 +50,6 @@ class PokedexAppBar extends StatelessWidget implements PreferredSizeWidget {
                   'assets/icons/pokeball.svg',
                   height: 32,
                   width: 32,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.white,
-                    BlendMode.srcIn,
-                  ),
                 ),
               ),
               const SizedBox(width: 12),
