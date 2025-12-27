@@ -15,6 +15,10 @@ class PokemonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final baseColor = pokemon.types.isNotEmpty
+        ? PokedexColors.getColorByType(pokemon.types.first.type.name)
+        : Colors.grey[400]!;
+
     return GestureDetector(
       onTap: () {
         context.go(
@@ -22,47 +26,127 @@ class PokemonCard extends StatelessWidget {
           extra: pokemon,
         );
       },
-      child: Card(
-        color: pokemon.types.isNotEmpty
-            ? PokedexColors.getColorByType(pokemon.types.first.type.name)
-            : Colors.grey[100],
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.6),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: baseColor.withOpacity(0.5),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              baseColor.withOpacity(0.8),
+              baseColor,
+              Colors.white.withOpacity(0.4), // Metallic shine
+              baseColor,
+              baseColor.withOpacity(0.9),
+            ],
+            stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
+          ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Hero(
-                  tag: 'pokemon-${pokemon.id}',
-                  child: CachedNetworkImage(
-                    imageUrl: pokemon.imageUrl,
-                    fit: BoxFit.contain,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+            // Static Holographic Overlay (Subtle)
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withOpacity(0.1),
+                      Colors.white.withOpacity(0.0),
+                      Colors.white.withOpacity(0.1),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
-              child: Text(
-                pokemon.displayName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: Colors.black87,
+            // Card Content (Image + Text)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Hero(
+                      tag: 'pokemon-${pokemon.id}',
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 15,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: pokemon.imageUrl,
+                          fit: BoxFit.contain,
+                          placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error, color: Colors.white70),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+                // Name Plate
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(14),
+                      bottomRight: Radius.circular(14),
+                    ),
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    pokemon.displayName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      letterSpacing: 0.5,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(1, 1),
+                          blurRadius: 2,
+                          color: Colors.black45,
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

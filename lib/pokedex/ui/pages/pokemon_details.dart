@@ -14,160 +14,295 @@ class PokemonDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final baseColor = pokemon.types.isNotEmpty
+        ? PokedexColors.getColorByType(pokemon.types.first.type.name)
+        : Colors.grey[400]!;
+
     return Scaffold(
       backgroundColor: Colors.white,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               pokemon.displayName,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    offset: Offset(0, 2),
+                    blurRadius: 4,
+                    color: Colors.black45,
+                  ),
+                ],
+              ),
             ),
             Text(
               pokemon.formattedId,
               style: TextStyle(
-                color: Colors.grey[600],
+                color: Colors.white.withOpacity(0.8),
                 fontSize: 14,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],
         ),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Pokemon Image with Hero Animation
-            AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: pokemon.types.isNotEmpty
-                      ? PokedexColors.getColorByType(
-                          pokemon.types.first.type.name,
-                        )
-                      : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(24),
+      body: Stack(
+        children: [
+          // Background Pattern
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/pokedex-bg.png',
+              fit: BoxFit.cover,
+              opacity: const AlwaysStoppedAnimation(.3),
+            ),
+          ),
+          // Gradient Header Background
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: MediaQuery.of(context).size.height * 0.45,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    baseColor,
+                    baseColor.withOpacity(0.8),
+                    Colors.transparent,
+                  ],
                 ),
-                padding: const EdgeInsets.all(32),
-                child: Hero(
-                  tag: 'pokemon-${pokemon.id}',
-                  child: CachedNetworkImage(
-                    imageUrl: pokemon.imageUrl,
-                    fit: BoxFit.contain,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(),
+              ),
+            ),
+          ),
+          SingleChildScrollView(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + kToolbarHeight + 16,
+              left: 24,
+              right: 24,
+              bottom: 24,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Pokemon Image with Metallic Card Style
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.6),
+                        width: 4,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: baseColor.withOpacity(0.4),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          baseColor.withOpacity(0.8),
+                          baseColor,
+                          Colors.white.withOpacity(0.4), // Metallic shine
+                          baseColor,
+                          baseColor.withOpacity(0.9),
+                        ],
+                        stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
+                      ),
                     ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error, size: 48),
+                    child: Stack(
+                      children: [
+                        // Static Holographic Overlay
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(28),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.white.withOpacity(0.15),
+                                  Colors.white.withOpacity(0.0),
+                                  Colors.white.withOpacity(0.15),
+                                ],
+                                stops: const [0.0, 0.5, 1.0],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(40),
+                          child: Hero(
+                            tag: 'pokemon-${pokemon.id}',
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.25),
+                                    blurRadius: 30,
+                                    offset: const Offset(0, 15),
+                                  ),
+                                ],
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl: pokemon.imageUrl,
+                                fit: BoxFit.contain,
+                                placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(
+                                      Icons.error,
+                                      size: 48,
+                                      color: Colors.white,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 32),
+                const SizedBox(height: 32),
 
-            // Basic Info Header
-            Text(
-              'Abilities',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Abilities List
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: pokemon.abilities.map((ability) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
+                // Info card for details
+                Container(
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: ability.isHidden
-                        ? Colors.blueGrey[50]
-                        : Colors.blue[50],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: ability.isHidden
-                          ? Colors.blueGrey[100]!
-                          : Colors.blue[100]!,
-                    ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        ability.ability.name[0].toUpperCase() +
-                            ability.ability.name.substring(1),
-                        style: TextStyle(
-                          color: ability.isHidden
-                              ? Colors.blueGrey[700]
-                              : Colors.blue[700],
-                          fontWeight: FontWeight.w600,
+                        'Abilities',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black87,
                         ),
                       ),
-                      if (ability.isHidden) ...[
-                        const SizedBox(width: 4),
-                        Icon(
-                          Icons.visibility_off_outlined,
-                          size: 14,
-                          color: Colors.blueGrey[400],
+                      const SizedBox(height: 16),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: pokemon.abilities.map((ability) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ability.isHidden
+                                  ? Colors.grey[100]
+                                  : baseColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: ability.isHidden
+                                    ? Colors.grey[300]!
+                                    : baseColor.withOpacity(0.3),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  ability.ability.name[0].toUpperCase() +
+                                      ability.ability.name.substring(1),
+                                  style: TextStyle(
+                                    color: ability.isHidden
+                                        ? Colors.grey[700]
+                                        : baseColor,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                if (ability.isHidden) ...[
+                                  const SizedBox(width: 6),
+                                  Icon(
+                                    Icons.visibility_off_outlined,
+                                    size: 16,
+                                    color: Colors.grey[500],
+                                  ),
+                                ],
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 32),
+                      if (pokemon.sprites.frontDefault != null) ...[
+                        Text(
+                          'Sprites',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                color: Colors.black87,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            _SpriteThumbnail(
+                              url: pokemon.sprites.frontDefault!,
+                              color: baseColor,
+                            ),
+                          ],
                         ),
                       ],
                     ],
                   ),
-                );
-              }).toList(),
-            ),
-
-            const SizedBox(height: 32),
-
-            // More Sprites Section (if available)
-            if (pokemon.sprites.frontDefault != null) ...[
-              Text(
-                'Sprites',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
                 ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  _SpriteThumbnail(url: pokemon.sprites.frontDefault!),
-                  // Add more sprites here if available in the model in the future
-                ],
-              ),
-            ],
-          ],
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class _SpriteThumbnail extends StatelessWidget {
-  const _SpriteThumbnail({required this.url});
+  const _SpriteThumbnail({
+    required this.url,
+    required this.color,
+  });
 
   final String url;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 80,
-      height: 80,
-      margin: const EdgeInsets.only(right: 12),
+      width: 90,
+      height: 90,
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        color: color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withOpacity(0.2)),
       ),
       child: CachedNetworkImage(
         imageUrl: url,

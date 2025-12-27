@@ -44,13 +44,10 @@ class PokedexAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-              Hero(
-                tag: 'appbar_pokeball',
-                child: SvgPicture.asset(
-                  'assets/icons/pokeball.svg',
-                  height: 32,
-                  width: 32,
-                ),
+              SvgPicture.asset(
+                'assets/icons/pokeball.svg',
+                height: 32,
+                width: 32,
               ),
               const SizedBox(width: 12),
               Expanded(

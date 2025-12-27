@@ -12,50 +12,61 @@ class PokedexHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const PokedexAppBar(),
-      body: BlocBuilder<PokedexCubit, PokedexState>(
-        builder: (context, state) {
-          switch (state.status) {
-            case PokemonListStatus.initial:
-              return const Center(child: CircularProgressIndicator());
-            case PokemonListStatus.loading:
-            case PokemonListStatus.success:
-              if (state.pokemons.isEmpty) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return ResponsiveGridListBuilder(
-                horizontalGridMargin: 50,
-                verticalGridMargin: 50,
-                minItemWidth: 300,
-                minItemsPerRow: 2,
-                maxItemsPerRow: 5,
-                gridItems: state.pokemons
-                    .map((pokemon) => PokemonCard(pokemon: pokemon))
-                    .toList(),
-                builder: (context, items) {
-                  return SingleChildScrollView(
-                    controller: state.scrollController,
-                    child: Column(
-                      children: [
-                        ...items,
-                        if (!state.hasReachedMax)
-                          const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(16),
-                              child: CircularProgressIndicator(),
-                            ),
-                          ),
-                      ],
-                    ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/pokedex-bg.png',
+              fit: BoxFit.cover,
+              opacity: const AlwaysStoppedAnimation(.7),
+            ),
+          ),
+          BlocBuilder<PokedexCubit, PokedexState>(
+            builder: (context, state) {
+              switch (state.status) {
+                case PokemonListStatus.initial:
+                  return const Center(child: CircularProgressIndicator());
+                case PokemonListStatus.loading:
+                case PokemonListStatus.success:
+                  if (state.pokemons.isEmpty) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ResponsiveGridListBuilder(
+                    horizontalGridMargin: 50,
+                    verticalGridMargin: 50,
+                    minItemWidth: 300,
+                    minItemsPerRow: 2,
+                    maxItemsPerRow: 5,
+                    gridItems: state.pokemons
+                        .map((pokemon) => PokemonCard(pokemon: pokemon))
+                        .toList(),
+                    builder: (context, items) {
+                      return SingleChildScrollView(
+                        controller: state.scrollController,
+                        child: Column(
+                          children: [
+                            ...items,
+                            if (!state.hasReachedMax)
+                              const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
                   );
-                },
-              );
-            case PokemonListStatus.failure:
-              // TODO: Handle this case.
-              throw UnimplementedError();
-          }
-        },
+                case PokemonListStatus.failure:
+                  // TODO: Handle this case.
+                  throw UnimplementedError();
+              }
+            },
+          ),
+        ],
       ),
     );
   }
