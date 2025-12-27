@@ -16,15 +16,31 @@ class PokedexCubit extends Cubit<PokedexState> {
         PokedexState(
           scrollController: ScrollController(),
         ),
-      );
+      ) {
+    _initScrollListener();
+  }
 
   final IPokemonRepository _repository;
+
+  void _initScrollListener() {
+    state.scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (state.hasReachedMax) return;
+    if (state.scrollController.position.pixels ==
+        state.scrollController.position.maxScrollExtent) {
+      fetchPokemons();
+    }
+  }
 
   Future<void> fetchPokemons() async {
     emit(state.copyWith(status: PokemonListStatus.loading));
 
     try {
-      final response = await _repository.getPokemonList();
+      final response = await _repository.getPokemonList(
+        offset: state.currentOffset,
+      );
       final newPokemons = response.results
           .map(
             (r) => PokemonDetail(

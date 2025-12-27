@@ -18,8 +18,12 @@ class PokedexHomePage extends StatelessWidget {
             case PokemonListStatus.initial:
               return const Center(child: CircularProgressIndicator());
             case PokemonListStatus.loading:
-              return const Center(child: CircularProgressIndicator());
             case PokemonListStatus.success:
+              if (state.pokemons.isEmpty) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
               return ResponsiveGridListBuilder(
                 horizontalGridMargin: 50,
                 verticalGridMargin: 50,
@@ -33,7 +37,16 @@ class PokedexHomePage extends StatelessWidget {
                   return SingleChildScrollView(
                     controller: state.scrollController,
                     child: Column(
-                      children: items,
+                      children: [
+                        ...items,
+                        if (!state.hasReachedMax)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16),
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                      ],
                     ),
                   );
                 },
