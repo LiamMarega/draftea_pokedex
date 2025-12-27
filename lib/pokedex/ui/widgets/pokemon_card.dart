@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draftea_pokedex/core/router/route.dart';
+import 'package:draftea_pokedex/core/utils/colors.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +23,9 @@ class PokemonCard extends StatelessWidget {
         );
       },
       child: Card(
-        color: Colors.grey[100],
+        color: pokemon.types.isNotEmpty
+            ? PokedexColors.getColorByType(pokemon.types.first.type.name)
+            : Colors.grey[100],
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

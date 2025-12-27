@@ -39,23 +39,55 @@ class PokedexColors {
   static const Color psychicLight = Color(0xFFD4B8E6);
   static const Color fightingLight = Color(0xFFB8C8E6);
   static const Color bugLight = Color(0xFFC8E6B8);
+  static const Color poisonLight = Color(0xFFE0B8E6);
+  static const Color rockLight = Color(0xFFD5D5B8);
+  static const Color ghostLight = Color(0xFFC1B8E6);
+  static const Color iceLight = Color(0xFFB8E0E6);
+  static const Color dragonLight = Color(0xFFC8B8F5);
+  static const Color darkLight = Color(0xFFB8B8B8);
+  static const Color steelLight = Color(0xFFB8C1C8);
+  static const Color flyingLight = Color(0xFFD9E8F5);
 
-  /// List of pastel colors for Pokémon cards
-  static const List<Color> cardColors = [
-    grassLight,
-    waterLight,
-    fireLight,
-    groundLight,
-    normalLight,
-    electricLight,
-    fairyLight,
-    psychicLight,
-    fightingLight,
-    bugLight,
-  ];
-
-  /// Returns a pastel color based on the Pokémon ID
-  static Color getCardColor(int pokemonId) {
-    return cardColors[pokemonId % cardColors.length];
+  /// Returns a color based on the Pokémon type
+  static Color getColorByType(String type) {
+    switch (type.toLowerCase()) {
+      case 'grass':
+        return grassLight;
+      case 'water':
+        return waterLight;
+      case 'fire':
+        return fireLight;
+      case 'ground':
+        return groundLight;
+      case 'electric':
+        return electricLight;
+      case 'fairy':
+        return fairyLight;
+      case 'psychic':
+        return psychicLight;
+      case 'fighting':
+        return fightingLight;
+      case 'bug':
+        return bugLight;
+      case 'poison':
+        return poisonLight;
+      case 'rock':
+        return rockLight;
+      case 'ghost':
+        return ghostLight;
+      case 'ice':
+        return iceLight;
+      case 'dragon':
+        return dragonLight;
+      case 'dark':
+        return darkLight;
+      case 'steel':
+        return steelLight;
+      case 'flying':
+        return flyingLight;
+      case 'normal':
+      default:
+        return normalLight;
+    }
   }
 }
