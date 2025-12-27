@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class PokedexAppBar extends StatelessWidget implements PreferredSizeWidget {
   const PokedexAppBar({
@@ -36,14 +37,16 @@ class PokedexAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: [
-              if (showBackButton)
+              if (showBackButton) ...[
                 IconButton(
                   icon: const Icon(
                     Icons.arrow_back_ios_new,
                     color: Colors.white,
                   ),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => context.pop(),
                 ),
+                const SizedBox(width: 12),
+              ],
               SvgPicture.asset(
                 'assets/icons/pokeball.svg',
                 height: 32,

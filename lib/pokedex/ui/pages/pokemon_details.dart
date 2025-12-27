@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draftea_pokedex/core/utils/colors.dart';
+import 'package:draftea_pokedex/core/widgets/pokedex_appbar.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 import 'package:flutter/material.dart';
 
@@ -21,38 +22,7 @@ class PokemonDetailsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              pokemon.displayName,
-              style: const TextStyle(
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-                shadows: [
-                  Shadow(
-                    offset: Offset(0, 2),
-                    blurRadius: 4,
-                    color: Colors.black45,
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              pokemon.formattedId,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-      ),
+      appBar: PokedexAppBar(title: pokemon.displayName, showBackButton: true),
       body: Stack(
         children: [
           // Background Pattern
@@ -105,7 +75,7 @@ class PokemonDetailsPage extends StatelessWidget {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: baseColor.withValues(alpha: 0.4),
+                          color: baseColor.withValues(alpha: 0.8),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -114,7 +84,7 @@ class PokemonDetailsPage extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          baseColor.withValues(alpha: 0.8),
+                          baseColor.withValues(alpha: 0.1),
                           baseColor,
                           Colors.white.withValues(alpha: 0.4), // Metallic shine
                           baseColor,

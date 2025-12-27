@@ -21,7 +21,7 @@ class PokemonCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        context.go(
+        context.push(
           PokedexRoutes.detailPath(pokemon.id),
           extra: pokemon,
         );
