@@ -1,5 +1,6 @@
 import 'package:draftea_pokedex/pokedex/data/models/pokemon.dart';
 import 'package:draftea_pokedex/pokedex/data/models/sprites.dart';
+import 'package:draftea_pokedex/pokedex/data/models/pokemon_type_slot.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'pokemon_detail.freezed.dart';
@@ -12,6 +13,7 @@ abstract class PokemonDetail with _$PokemonDetail {
     required String name,
     required Sprites sprites,
     required List<PokemonAbility> abilities,
+    @Default([]) List<PokemonTypeSlot> types,
   }) = _PokemonDetail;
   const PokemonDetail._();
 

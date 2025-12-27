@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
-import 'package:draftea_pokedex/pokedex/data/models/sprites.dart';
+
 import 'package:draftea_pokedex/pokedex/domain/repositories/pokemon_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -41,19 +41,14 @@ class PokedexCubit extends Cubit<PokedexState> {
       final response = await _repository.getPokemonList(
         offset: state.currentOffset,
       );
-      final newPokemons = response.results
-          .map(
-            (r) => PokemonDetail(
-              id: int.parse(r.url.split('/').where((e) => e.isNotEmpty).last),
-              name: r.name,
-              sprites: Sprites(
-                frontDefault:
-                    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${r.url.split('/').where((e) => e.isNotEmpty).last}.png',
-              ),
-              abilities: [],
-            ),
-          )
-          .toList();
+      final newPokemons = await Future.wait(
+        response.results.map((r) async {
+          final id = int.parse(
+            r.url.split('/').where((e) => e.isNotEmpty).last,
+          );
+          return _repository.getPokemon(id);
+        }),
+      );
 
       emit(
         state.copyWith(

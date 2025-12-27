@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_list_response.dart';
 import 'package:draftea_pokedex/pokedex/domain/repositories/pokemon_repository.dart';
 import 'package:injectable/injectable.dart';
@@ -27,5 +28,16 @@ class PokemonRepository implements IPokemonRepository {
     }
 
     return PokemonListResponse.fromJson(response.data!);
+  }
+
+  @override
+  Future<PokemonDetail> getPokemon(int id) async {
+    final response = await _dio.get<Map<String, dynamic>>('/pokemon/$id');
+
+    if (response.data == null) {
+      throw Exception('No data received');
+    }
+
+    return PokemonDetail.fromJson(response.data!);
   }
 }
