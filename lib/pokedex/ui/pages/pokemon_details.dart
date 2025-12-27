@@ -20,22 +20,18 @@ class PokemonDetailsPage extends StatelessWidget {
         : Colors.grey[400]!;
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      extendBodyBehindAppBar: true,
       appBar: PokedexAppBar(title: pokemon.displayName, showBackButton: true),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final isWide = constraints.maxWidth > 800;
           final isLandscape = constraints.maxWidth > constraints.maxHeight;
-          final useSideBySide = isWide || isLandscape;
+          final isDesktop = constraints.maxWidth > 800;
 
-          // Pokemon Image Card Widget
           final imageCard = Container(
-            constraints: useSideBySide
+            constraints: (isLandscape || isDesktop)
                 ? null
                 : const BoxConstraints(minHeight: 300),
             child: AspectRatio(
-              aspectRatio: useSideBySide ? 0.8 : 1.0,
+              aspectRatio: (isLandscape || isDesktop) ? 0.8 : 1.0,
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(32),
@@ -60,7 +56,7 @@ class PokemonDetailsPage extends StatelessWidget {
                       baseColor,
                       baseColor.withValues(alpha: 0.9),
                     ],
-                    stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
+                    stops: const [0, 0.3, 0.5, 0.7, 1],
                   ),
                 ),
                 child: Stack(
@@ -78,7 +74,7 @@ class PokemonDetailsPage extends StatelessWidget {
                               Colors.white.withValues(alpha: 0.0),
                               Colors.white.withValues(alpha: 0.15),
                             ],
-                            stops: const [0.0, 0.5, 1.0],
+                            stops: const [0, 0.5, 1],
                           ),
                         ),
                       ),
@@ -137,7 +133,9 @@ class PokemonDetailsPage extends StatelessWidget {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: useSideBySide ? MainAxisSize.max : MainAxisSize.min,
+              mainAxisSize: (isLandscape || isDesktop)
+                  ? MainAxisSize.max
+                  : MainAxisSize.min,
               children: [
                 Text(
                   'Abilities',
@@ -218,42 +216,38 @@ class PokemonDetailsPage extends StatelessWidget {
             ),
           );
 
-          final topPadding =
-              MediaQuery.of(context).padding.top + kToolbarHeight + 24;
           final bottomPadding = MediaQuery.of(context).padding.bottom + 40;
 
           return Stack(
             children: [
-              // Background Pattern
               Positioned.fill(
                 child: Image.asset(
-                  useSideBySide
+                  (isLandscape || isDesktop)
                       ? 'assets/images/pokedex-bg-landscape.png'
                       : 'assets/images/pokedex-bg.png',
                   fit: BoxFit.cover,
                   opacity: const AlwaysStoppedAnimation(.7),
                 ),
               ),
-              // Gradient Header Background
               Positioned(
                 top: 0,
                 left: 0,
                 right: 0,
-                height: useSideBySide
+                height: (isLandscape || isDesktop)
                     ? constraints.maxHeight
                     : constraints.maxHeight * 0.45,
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: useSideBySide
+                      begin: (isLandscape || isDesktop)
                           ? Alignment.centerLeft
                           : Alignment.topCenter,
-                      end: useSideBySide
+                      end: (isLandscape || isDesktop)
                           ? Alignment.centerRight
                           : Alignment.bottomCenter,
                       colors: [
-                        baseColor,
                         baseColor.withValues(alpha: 0.8),
+                        baseColor.withValues(alpha: 0.6),
                         Colors.transparent,
                       ],
                     ),
@@ -268,7 +262,7 @@ class PokemonDetailsPage extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: EdgeInsets.only(
-                      top: topPadding,
+                      top: 24,
                       left: 24,
                       right: 24,
                       bottom: bottomPadding,
@@ -276,7 +270,7 @@ class PokemonDetailsPage extends StatelessWidget {
                     child: Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 1000),
-                        child: useSideBySide
+                        child: (isLandscape || isDesktop)
                             ? IntrinsicHeight(
                                 child: Row(
                                   crossAxisAlignment:

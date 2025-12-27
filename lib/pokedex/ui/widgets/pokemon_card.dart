@@ -50,7 +50,7 @@ class PokemonCard extends StatelessWidget {
               baseColor,
               baseColor.withValues(alpha: 0.9),
             ],
-            stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
+            stops: const [0, 0.3, 0.5, 0.7, 1],
           ),
         ),
         child: Stack(
@@ -68,7 +68,7 @@ class PokemonCard extends StatelessWidget {
                       Colors.white.withValues(alpha: 0.0),
                       Colors.white.withValues(alpha: 0.1),
                     ],
-                    stops: const [0.0, 0.5, 1.0],
+                    stops: const [0, 0.5, 1],
                   ),
                 ),
               ),
