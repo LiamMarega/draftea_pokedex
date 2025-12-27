@@ -1,4 +1,5 @@
 import 'package:draftea_pokedex/core/widgets/pokedex_appbar.dart';
+import 'package:draftea_pokedex/core/widgets/pokedex_error_widget.dart';
 import 'package:draftea_pokedex/pokedex/ui/cubit/pokedex_cubit.dart';
 import 'package:draftea_pokedex/pokedex/ui/widgets/pokemon_card.dart';
 import 'package:flutter/material.dart';
@@ -68,8 +69,7 @@ class PokedexHomePage extends StatelessWidget {
                         },
                       );
                     case PokemonListStatus.failure:
-                      // TODO: Handle this case.
-                      throw UnimplementedError();
+                      return const Center(child: PokedexErrorWidget());
                   }
                 },
               ),
