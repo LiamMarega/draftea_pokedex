@@ -75,6 +75,11 @@ Ejecutá este comando para arrancar en modo desarrollo:
 flutter run --flavor development --target lib/main_development.dart
 ```
 
+Ejecutá este comando para arrancar en modo producción:
+```sh
+flutter run --flavor production --target lib/main_production.dart
+```
+
 ---
 
 ## 📸 Screenshots
