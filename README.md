@@ -72,12 +72,12 @@ Ademas obviamente para acelerar el proceso de desarrollo me apoye del uso de  **
 
 Ejecutá este comando para arrancar en modo desarrollo:
 ```sh
-flutter run --flavor development --target lib/main_development.dart
+flutter run -t lib/main_development.dart --flavor development
 ```
 
 Ejecutá este comando para arrancar en modo producción:
 ```sh
-flutter run --flavor production --target lib/main_production.dart
+flutter run --t lib/main_production.dart --flavor production
 ```
 
 ---
