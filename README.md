@@ -61,7 +61,7 @@ Ademas obviamente para acelerar el proceso de desarrollo me apoye del uso de  **
 ## 🛠️ Pendientes (Lo que agregaría después)
 1.  **Animaciones**: Sumar efectos de entrada fluidos y animaciones al pasar el mouse (hovers) por las cartas en Web.
 2.  **Búsqueda avanzada**: Filtros por tipos y parámetros de URL para poder compartir un link directo a un Pokemon.
-3.  **DeepLinks**: Configurar el router para que `pokedex.com/pokemon/25` te lleve directo a Pikachu.
+3.  **DeepLinks**: Configurar el router y busquedas por **search params** para poder compartir links directos a pokemones.
 4.  **Tests**: Aunque la arquitectura está lista para testear, agregarle tests unitarios a los Cubits y Repositorios sería el siguiente paso lógico.
 
 ---
