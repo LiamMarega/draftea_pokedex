@@ -140,14 +140,14 @@ class PokemonCard extends StatelessWidget {
                   child: Text(
                     pokemon.displayName,
                     style: const TextStyle(
+                      fontFamily: 'PokemonSolid',
                       color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16,
-                      letterSpacing: 0.5,
+                      fontSize: 18,
+                      letterSpacing: 2.0,
                       shadows: [
                         Shadow(
-                          offset: Offset(1, 1),
-                          blurRadius: 2,
+                          offset: Offset(2, 2),
+                          blurRadius: 4,
                           color: Colors.black45,
                         ),
                       ],

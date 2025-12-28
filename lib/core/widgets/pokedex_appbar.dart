@@ -7,10 +7,12 @@ class PokedexAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.title = 'Draftea Pokedex',
     this.showBackButton = false,
+    this.titleStyle,
   });
 
   final String title;
   final bool showBackButton;
+  final TextStyle? titleStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -56,19 +58,21 @@ class PokedexAppBar extends StatelessWidget implements PreferredSizeWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black26,
-                        offset: Offset(2, 2),
-                        blurRadius: 4,
+                  style:
+                      titleStyle ??
+                      const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
+                            offset: Offset(2, 2),
+                            blurRadius: 4,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
                 ),
               ),
             ],

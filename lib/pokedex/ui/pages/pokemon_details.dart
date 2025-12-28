@@ -20,7 +20,24 @@ class PokemonDetailsPage extends StatelessWidget {
         : Colors.grey[400]!;
 
     return Scaffold(
-      appBar: PokedexAppBar(title: pokemon.displayName, showBackButton: true),
+      appBar: PokedexAppBar(
+        title: pokemon.displayName,
+        showBackButton: true,
+        titleStyle: const TextStyle(
+          fontFamily: 'PokemonSolid',
+          color: Colors.white,
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2.0,
+          shadows: [
+            Shadow(
+              color: Colors.black26,
+              offset: Offset(2, 2),
+              blurRadius: 4,
+            ),
+          ],
+        ),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isLandscape = constraints.maxWidth > constraints.maxHeight;

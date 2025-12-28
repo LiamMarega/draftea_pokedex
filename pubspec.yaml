@@ -48,3 +48,11 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+
+  fonts:
+    - family: PokemonHollow
+      fonts:
+        - asset: assets/fonts/Pokemon Hollow.ttf
+    - family: PokemonSolid
+      fonts:
+        - asset: assets/fonts/Pokemon Solid.ttf
