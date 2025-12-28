@@ -6,7 +6,7 @@ part 'pokemon_list_response.freezed.dart';
 part 'pokemon_list_response.g.dart';
 
 @freezed
-@HiveType(typeId: 9)
+@HiveType(typeId: 13)
 abstract class PokemonListResponse with _$PokemonListResponse {
   const factory PokemonListResponse({
     @HiveField(0) required int count,
