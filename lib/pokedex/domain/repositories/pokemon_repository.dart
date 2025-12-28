@@ -7,8 +7,9 @@ abstract class IPokemonRepository {
     int offset = 0,
   });
 
-  Future<List<PokemonDetail>> getPokemonListWithDetails({
-    int limit = 20,
-    int offset = 0,
-  });
+  // Future<List<PokemonDetail>> getPokemonListWithDetails({
+  //   int limit = 20,
+  //   int offset = 0,
+  // });
+  Future<PokemonDetail> getPokemon(int id);
 }

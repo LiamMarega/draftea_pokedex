@@ -1,17 +1,21 @@
 import 'package:draftea_pokedex/pokedex/data/models/pokemon.dart';
 import 'package:draftea_pokedex/pokedex/data/models/sprites.dart';
+import 'package:draftea_pokedex/pokedex/data/models/pokemon_type_slot.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hive_ce/hive.dart';
 
 part 'pokemon_detail.freezed.dart';
 part 'pokemon_detail.g.dart';
 
 @freezed
+@HiveType(typeId: 0)
 abstract class PokemonDetail with _$PokemonDetail {
   const factory PokemonDetail({
-    required int id,
-    required String name,
-    required Sprites sprites,
-    required List<PokemonAbility> abilities,
+    @HiveField(0) required int id,
+    @HiveField(1) required String name,
+    @HiveField(2) required Sprites sprites,
+    @HiveField(3) required List<PokemonAbility> abilities,
+    @HiveField(4) @Default([]) List<PokemonTypeSlot> types,
   }) = _PokemonDetail;
   const PokemonDetail._();
 
