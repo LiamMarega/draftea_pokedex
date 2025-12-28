@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draftea_pokedex/core/router/route.dart';
 import 'package:draftea_pokedex/core/utils/colors.dart';
+import 'package:draftea_pokedex/pokedex/data/models/pokemon.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -53,6 +54,7 @@ class PokemonCard extends StatelessWidget {
             stops: const [0, 0.3, 0.5, 0.7, 1],
           ),
         ),
+        constraints: const BoxConstraints(minHeight: Pokemon.minHeight),
         child: Stack(
           children: [
             // Static Holographic Overlay (Subtle)
@@ -95,12 +97,21 @@ class PokemonCard extends StatelessWidget {
                         ),
                         child: CachedNetworkImage(
                           imageUrl: pokemon.imageUrl,
+                          height: Pokemon.maxThumbnailHeight,
                           fit: BoxFit.contain,
-                          placeholder: (context, url) => const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                          placeholder: (context, url) => SizedBox(
+                            height: Pokemon.maxThumbnailHeight,
+                            child: const Center(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
                           ),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error, color: Colors.white70),
+                          errorWidget: (context, url, error) => SizedBox(
+                            height: Pokemon.maxThumbnailHeight,
+                            child: const Icon(
+                              Icons.error,
+                              color: Colors.white70,
+                            ),
+                          ),
                         ),
                       ),
                     ),

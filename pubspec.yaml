@@ -17,6 +17,7 @@ dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_localizations:
     sdk: flutter
+  flutter_native_splash: ^2.4.7
   flutter_svg: ^2.2.3
   freezed_annotation: ^3.1.0
   get_it: ^9.2.0

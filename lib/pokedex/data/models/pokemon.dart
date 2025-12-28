@@ -21,6 +21,9 @@ abstract class Pokemon with _$Pokemon {
     final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
     return int.parse(segments.last);
   }
+
+  static const double minHeight = 210.0;
+  static const double maxThumbnailHeight = 140.0;
 }
 
 @freezed
