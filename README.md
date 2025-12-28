@@ -1,7 +1,6 @@
 # Draftea Pokedex 📱
 
-![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)
-![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+[Descargar última versión de Draftea Pokedex by Liam Marega](https://github.com/LiamMarega/draftea_pokedex/releases/tag/production)
 
 
 ---
