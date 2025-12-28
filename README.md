@@ -74,4 +74,12 @@ Ejecutá este comando para arrancar en modo desarrollo:
 flutter run --flavor development --target lib/main_development.dart
 ```
 
+---
+
+## 📸 Screenshots
+
+| Home Page | Details Page |
+| :---: | :---: |
+| ![Home Page](./assets/images/screenshots/home_screenshot.png) | ![Details Page](./assets/images/screenshots/details_screenshot.png) |
+
 
