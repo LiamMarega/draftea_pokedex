@@ -14,7 +14,6 @@ build-mobile:
     echo
     just clean
     just codegen-build
-    just i10n
     flutter build appbundle --split-debug-info=./ -t lib/main_production.dart --flavor production
     flutter build ipa -t lib/main_production.dart --flavor production
 
@@ -42,12 +41,4 @@ codegen-build-delete:
 
 codegen-build:
     dart run build_runner build
-
-# Delete conflicting and generated code with build runner 
-codegen-build-tests:
-    flutter pub run build_runner build -c test 
-
-# Generate i10n
-i10n:
-    flutter pub run easy_localization:generate -S assets/translations -f keys -O lib/common/ui -o locale_keys.g.dart
 
