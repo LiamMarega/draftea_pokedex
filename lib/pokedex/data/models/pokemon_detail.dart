@@ -1,6 +1,7 @@
 import 'package:draftea_pokedex/pokedex/data/models/pokemon.dart';
-import 'package:draftea_pokedex/pokedex/data/models/sprites.dart';
+import 'package:draftea_pokedex/pokedex/data/models/pokemon_stat.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_type_slot.dart';
+import 'package:draftea_pokedex/pokedex/data/models/sprites.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive_ce/hive.dart';
 
@@ -16,6 +17,10 @@ abstract class PokemonDetail with _$PokemonDetail {
     @HiveField(2) required Sprites sprites,
     @HiveField(3) required List<PokemonAbility> abilities,
     @HiveField(4) @Default([]) List<PokemonTypeSlot> types,
+    @HiveField(5) required int height,
+    @HiveField(6) required int weight,
+    @HiveField(7) @Default([]) List<PokemonStat> stats,
+    @HiveField(8) @JsonKey(name: 'base_experience') int? baseExperience,
   }) = _PokemonDetail;
   const PokemonDetail._();
 
