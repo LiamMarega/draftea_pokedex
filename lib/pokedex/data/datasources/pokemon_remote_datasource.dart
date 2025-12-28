@@ -20,7 +20,7 @@ class PokemonRemoteDataSource implements IPokemonRemoteDataSource {
     int offset = 0,
   }) async {
     final response = await _dio.get<Map<String, dynamic>>(
-      '/pokemonasdasdasdassad',
+      '/pokemon',
       queryParameters: {
         'limit': limit,
         'offset': offset,

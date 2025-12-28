@@ -69,7 +69,10 @@ class PokedexHomePage extends StatelessWidget {
                         },
                       );
                     case PokemonListStatus.failure:
-                      return const Center(child: PokedexErrorWidget());
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: const Center(child: PokedexErrorWidget()),
+                      );
                   }
                 },
               ),
