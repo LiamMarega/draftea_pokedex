@@ -76,6 +76,43 @@ class PokedexHomePage extends StatelessWidget {
                   }
                 },
               ),
+              BlocSelector<PokedexCubit, PokedexState, bool>(
+                selector: (state) => state.isOffline,
+                builder: (context, isOffline) {
+                  if (!isOffline) return const SizedBox.shrink();
+                  return Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: SafeArea(
+                      bottom: false,
+                      child: Container(
+                        color: Colors.red,
+                        padding: const EdgeInsets.all(4),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.wifi_off,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Modo Offline',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           );
         },

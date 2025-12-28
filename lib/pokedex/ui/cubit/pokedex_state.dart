@@ -10,6 +10,7 @@ abstract class PokedexState with _$PokedexState {
     @Default([]) List<PokemonDetail> pokemons,
     @Default(false) bool hasReachedMax,
     @Default(0) int currentOffset,
+    @Default(false) bool isOffline,
 
     String? errorMessage,
   }) = _PokedexState;

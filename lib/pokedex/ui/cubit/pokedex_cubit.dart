@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 
 import 'package:draftea_pokedex/pokedex/domain/repositories/pokemon_repository.dart';
@@ -18,16 +21,31 @@ class PokedexCubit extends Cubit<PokedexState> {
         ),
       ) {
     _initScrollListener();
+    _initConnectivityListener();
   }
 
   final IPokemonRepository _repository;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+
+  void _initConnectivityListener() {
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
+      _updateConnectivity,
+    );
+    // Check initial state
+    Connectivity().checkConnectivity().then(_updateConnectivity);
+  }
+
+  void _updateConnectivity(List<ConnectivityResult> results) {
+    final isOffline = results.contains(ConnectivityResult.none);
+    emit(state.copyWith(isOffline: isOffline));
+  }
 
   void _initScrollListener() {
     state.scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
-    if (state.hasReachedMax) return;
+    if (state.hasReachedMax || state.isOffline) return;
     if (state.scrollController.position.pixels ==
         state.scrollController.position.maxScrollExtent) {
       fetchPokemons();
@@ -35,7 +53,11 @@ class PokedexCubit extends Cubit<PokedexState> {
   }
 
   Future<void> fetchPokemons() async {
-    emit(state.copyWith(status: PokemonListStatus.loading));
+    if (state.isOffline && state.pokemons.isNotEmpty) return;
+
+    if (state.pokemons.isEmpty) {
+      emit(state.copyWith(status: PokemonListStatus.loading));
+    }
 
     try {
       final response = await _repository.getPokemonList(
@@ -59,17 +81,24 @@ class PokedexCubit extends Cubit<PokedexState> {
         ),
       );
     } catch (e) {
-      emit(
-        state.copyWith(
-          status: PokemonListStatus.failure,
-          errorMessage: e.toString(),
-        ),
-      );
+      if (state.pokemons.isNotEmpty) {
+        // Keep explicit status but show error in UI/logs?
+        // Or just don't emit failure to prevent screen replacement
+        emit(state.copyWith(errorMessage: e.toString()));
+      } else {
+        emit(
+          state.copyWith(
+            status: PokemonListStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
     }
   }
 
   @override
   Future<void> close() {
+    _connectivitySubscription?.cancel();
     state.scrollController.dispose();
     return super.close();
   }
