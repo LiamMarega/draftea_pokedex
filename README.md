@@ -40,8 +40,9 @@ En el [pubspec.yaml](./pubspec.yaml) vas a ver algunas dependencias clave:
 *   **CachedNetworkImage**: Para que las fotos se guarden en caché.
 
 ### 3. Modo offline
+Al entrar en modo offline la aplicacion lo detecta y muestra un cartel.
 primero intentamos obtener los datos de la API para obtener datos actualiazdos, si no los obtenemos, obtenemos los datos de **Hive** guardados en cache anteriormente. 
-Como generalmente los datos en esta api no cambian no implemente un sistema de expiración muy complejo.
+Como generalmente los datos en esta api no cambian no implemente un sistema de expiración complejo.
 
 ### 4. Calidad🧼
 *   **Inversión de dependencias**: No creo los objetos a mano dentro de las clases. Uso `GetIt` para que las piezas encajen solas.
