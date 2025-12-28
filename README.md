@@ -29,6 +29,7 @@ lib/
 **Clean Architecture** con **BLoC** para el estado. para que que la app sea una web súper compleja, toda la lógica del "Dominio" se queda igual. Solo tendríamos que retocar la capa de UI.
 
 Para que la experiencia en **Web** use el paquete `responsive_grid_list` en la [Home Page](./lib/pokedex/ui/pages/pokedex_home.dart). Esto permite que la grilla de Pokemons se adapte segun el width de la pantalla.
+Para la imagen de fondo de pantalla de la app se uso una original en resolucion vertical, y luego adapte la misma con ayuda de IA para tener la misma en formato horizontal y poder alternar dependiendo el width de la pantalla.
 
 ### 2. Paquetes usados
 En el [pubspec.yaml](./pubspec.yaml) vas a ver algunas dependencias clave:
