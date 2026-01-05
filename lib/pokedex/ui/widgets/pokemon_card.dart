@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draftea_pokedex/core/router/route.dart';
 import 'package:draftea_pokedex/core/utils/colors.dart';
-import 'package:draftea_pokedex/pokedex/data/models/pokemon.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class PokemonCard extends StatelessWidget {
+class PokemonCard extends StatefulWidget {
   const PokemonCard({
     required this.pokemon,
     super.key,
@@ -15,151 +15,180 @@ class PokemonCard extends StatelessWidget {
   final PokemonDetail pokemon;
 
   @override
+  State<PokemonCard> createState() => _PokemonCardState();
+}
+
+class _PokemonCardState extends State<PokemonCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _scaleController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scaleController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final baseColor = pokemon.types.isNotEmpty
-        ? PokedexColors.getColorByType(pokemon.types.first.type.name)
-        : Colors.grey[400]!;
+    final pokemon = widget.pokemon;
+    final typeName = pokemon.types.isNotEmpty
+        ? pokemon.types.first.type.name
+        : 'normal';
+    final color = PokedexColors.getColorByType(typeName);
 
     return GestureDetector(
-      onTap: () {
-        context.push(
-          PokedexRoutes.detailPath(pokemon.id),
-          extra: pokemon,
-        );
+      onTapDown: (_) => _scaleController.forward(),
+      onTapUp: (_) {
+        _scaleController.reverse();
+        context.push(PokedexRoutes.detailPath(pokemon.id), extra: pokemon);
       },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.6),
-            width: 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: baseColor.withValues(alpha: 0.5),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              baseColor.withValues(alpha: 0.8),
-              baseColor,
-              Colors.white.withValues(alpha: 0.4), // Metallic shine
-              baseColor,
-              baseColor.withValues(alpha: 0.9),
+      onTapCancel: () => _scaleController.reverse(),
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: child,
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            // Glassmorphism: pastel background with type color
+            color: color.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
             ],
-            stops: const [0, 0.3, 0.5, 0.7, 1],
           ),
-        ),
-        constraints: const BoxConstraints(minHeight: Pokemon.minHeight),
-        child: Stack(
-          children: [
-            // Static Holographic Overlay (Subtle)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withValues(alpha: 0.1),
-                      Colors.white.withValues(alpha: 0.0),
-                      Colors.white.withValues(alpha: 0.1),
-                    ],
-                    stops: const [0, 0.5, 1],
+          child: Stack(
+            children: [
+              // --- LAYER 1: Giant ID Decoration ---
+              Positioned(
+                right: 3,
+                top: -5,
+                child: Text(
+                  pokemon.formattedId,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 55,
+                    fontWeight: FontWeight.w900,
+                    color: color.withValues(alpha: 0.15),
+                    height: 1,
                   ),
                 ),
               ),
-            ),
-            // Card Content (Image + Text)
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Hero(
-                      tag: 'pokemon-${pokemon.id}',
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.3),
-                              blurRadius: 15,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: CachedNetworkImage(
-                          imageUrl: pokemon.imageUrl,
-                          height: Pokemon.maxThumbnailHeight,
-                          fit: BoxFit.contain,
-                          placeholder: (context, url) => SizedBox(
-                            height: Pokemon.maxThumbnailHeight,
-                            child: const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => SizedBox(
-                            height: Pokemon.maxThumbnailHeight,
-                            child: const Icon(
-                              Icons.error,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // Name Plate
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 8,
-                  ),
+
+              // --- LAYER 2: White circle decoration ---
+              Positioned(
+                bottom: -30,
+                right: -30,
+                child: Container(
+                  width: 120,
+                  height: 120,
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(14),
-                      bottomRight: Radius.circular(14),
+                    color: Colors.white.withValues(alpha: 0.25),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+
+              // --- LAYER 3: Content (Name + Type Chips) ---
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Pokemon Name
+                    Text(
+                      pokemon.displayName,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: PokedexColors.textMain,
+                        height: 1.1,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    border: Border(
-                      top: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        width: 1,
+                    const SizedBox(height: 8),
+
+                    // Type Chips (vertical)
+                    ...pokemon.types
+                        .take(2)
+                        .map(
+                          (t) => Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: PokedexColors.getChipColorByType(
+                                  t.type.name,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                t.type.name,
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                  ],
+                ),
+              ),
+
+              // --- LAYER 4: Pokemon Image with Hero ---
+              Positioned(
+                bottom: 8,
+                right: 8,
+                child: Hero(
+                  tag: 'pokemon-${pokemon.id}',
+                  child: CachedNetworkImage(
+                    imageUrl: pokemon.imageUrl,
+                    height: 90,
+                    width: 90,
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) => const SizedBox(
+                      height: 90,
+                      width: 90,
+                    ),
+                    errorWidget: (context, url, error) => const SizedBox(
+                      height: 90,
+                      width: 90,
+                      child: Icon(
+                        Icons.catching_pokemon,
+                        size: 40,
+                        color: Colors.grey,
                       ),
                     ),
                   ),
-                  child: Text(
-                    pokemon.displayName,
-                    style: const TextStyle(
-                      fontFamily: 'PokemonSolid',
-                      color: Colors.white,
-                      fontSize: 18,
-                      letterSpacing: 2.0,
-                      shadows: [
-                        Shadow(
-                          offset: Offset(2, 2),
-                          blurRadius: 4,
-                          color: Colors.black45,
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
                 ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
