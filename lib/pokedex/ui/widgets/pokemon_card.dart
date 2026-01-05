@@ -67,11 +67,11 @@ class _PokemonCardState extends State<PokemonCard>
         child: Container(
           decoration: BoxDecoration(
             // Glassmorphism: pastel background with type color
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -88,7 +88,7 @@ class _PokemonCardState extends State<PokemonCard>
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 55,
                     fontWeight: FontWeight.w900,
-                    color: color.withOpacity(0.15),
+                    color: color.withValues(alpha: 0.15),
                     height: 1,
                   ),
                 ),
@@ -102,7 +102,7 @@ class _PokemonCardState extends State<PokemonCard>
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.25),
+                    color: Colors.white.withValues(alpha: 0.25),
                     shape: BoxShape.circle,
                   ),
                 ),
