@@ -70,7 +70,19 @@ Ademas obviamente para acelerar el proceso de desarrollo me apoye del uso de  **
 
 ## 🚀 Cómo correr el proyecto
 
-Ejecutá este comando para arrancar en modo desarrollo:
+Antes de ejecutar el proyecto, es necesario preparar el entorno:
+
+1. Generar los archivos de código generado:
+```sh
+dart run build_runner build
+```
+
+2. Instalar las dependencias:
+```sh
+dart pub get
+```
+
+Luego, ejecutá este comando para arrancar en modo desarrollo:
 ```sh
 flutter run --flavor development --target lib/main_development.dart
 ```
