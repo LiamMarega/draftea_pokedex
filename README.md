@@ -31,6 +31,8 @@ lib/
 
 Para que la experiencia en **Web** use el paquete `responsive_grid_list` en la [Home Page](./lib/pokedex/ui/pages/pokedex_home.dart). Esto permite que la grilla de Pokemons se adapte segun el width de la pantalla.
 
+Además, se realizó un **rediseño moderno** de la interfaz con un enfoque en la simplicidad y fluidez visual, priorizando una experiencia de usuario intuitiva y atractiva.
+
 ### 2. Paquetes usados
 En el [pubspec.yaml](./pubspec.yaml) vas a ver algunas dependencias clave:
 *   **Hive**: Lo elegí para el almacenamiento local porque es increíblemente rápido y está hecho para Flutter. Ideal para guardar los datos de los Pokemons y que la app abra al instante.
@@ -49,10 +51,10 @@ Como generalmente los datos en esta api no cambian no implemente un sistema de e
 *   **UI Declarativa**: Gracias a BLoC, la interfaz es una función del estado. Si el estado cambia, la UI se actualiza sola de forma predecible.
 
 ### 5. Trade-offs
-Al tener poco tiempo, decidí enfocarme 100% en que la **UX sea fluida** que es mi fuerte y el código sea sólido. 
+Al tener poco tiempo, decidí enfocarme 100% en que la **UX sea fluida** que es mi fuerte y el código sea sólida.
  **Peticiones paralelas**: Hago una llamada para la lista y luego 20 paralelas para los detalles. Consume un poco más de datos al principio, pero la recompensa es ver los tipos y las imágenes de una sin esperar.
 
-No termine de implementar sistemas de busquedas o filtros para enfocarme en que la UX sea fluida mas estetica y demostrar con informacion basica detalles del pokemon.
+No terminé de implementar sistemas de búsquedas o filtros para enfocarme en que la UX sea fluida más estética y demostrar con información básica detalles del pokemon. **Nota importante**: Actualmente, ni los filtros ni el buscador en la página de inicio funcionan aún, están presentes únicamente como elementos de UI para futuras implementaciones.
 
 Ademas obviamente para acelerar el proceso de desarrollo me apoye del uso de  **IA** para ayudarme a estructurar el proyecto, planificarlo y minimizar el boilerplate de codigo.
 
