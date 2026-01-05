@@ -14,8 +14,6 @@ class PokedexHomePage extends StatefulWidget {
 }
 
 class _PokedexHomePageState extends State<PokedexHomePage> {
-  int _selectedNavIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +50,7 @@ class _PokedexHomePageState extends State<PokedexHomePage> {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -66,48 +64,14 @@ class _PokedexHomePageState extends State<PokedexHomePage> {
                 ),
               ),
 
-              // 2. Modern Search Bar
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 20,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        color: PokedexColors.textMain,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'What Pokémon are you looking for?',
-                        hintStyle: GoogleFonts.plusJakartaSans(
-                          color: Colors.grey.shade400,
-                          fontSize: 15,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.search_rounded,
-                          color: Colors.grey.shade400,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 18,
-                        ),
-                      ),
-                    ),
-                  ),
+              // 2. Sticky Search Bar
+              SliverPersistentHeader(
+                pinned: true,
+
+                delegate: _SearchHeaderDelegate(
+                  topPadding: MediaQuery.of(context).padding.top,
+                  minHeight: 30 + MediaQuery.of(context).padding.top,
+                  maxHeight: 50,
                 ),
               ),
 
@@ -171,7 +135,7 @@ class _PokedexHomePageState extends State<PokedexHomePage> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.red.withOpacity(0.3),
+                        color: Colors.red.withValues(alpha: 0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -238,46 +202,85 @@ class _PokedexHomePageState extends State<PokedexHomePage> {
       ),
     );
   }
+}
 
-  Widget _buildNavItem({
-    required IconData icon,
-    required String label,
-    required int index,
-  }) {
-    final isActive = _selectedNavIndex == index;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedNavIndex = index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            decoration: isActive
-                ? BoxDecoration(
-                    color: PokedexColors.primary.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(20),
-                  )
-                : null,
-            child: Icon(
-              icon,
-              color: isActive ? PokedexColors.primary : Colors.grey.shade400,
-              size: 24,
-            ),
-          ),
-          if (isActive) ...[
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: PokedexColors.primary,
-              ),
+/// Delegate for the sticky search header with SafeArea support
+class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
+  _SearchHeaderDelegate({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.topPadding,
+  });
+
+  final double minHeight;
+  final double maxHeight;
+  final double topPadding;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(
+      color: PokedexColors.backgroundLight,
+      padding: EdgeInsets.only(
+        left: 24,
+        right: 24,
+      ),
+      alignment: Alignment.center,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
             ),
           ],
-        ],
+        ),
+        child: TextField(
+          onChanged: (query) {
+            // TODO: Implement search functionality
+            // context.read<PokedexCubit>().onSearchChanged(query);
+          },
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 16,
+            color: PokedexColors.textMain,
+          ),
+          decoration: InputDecoration(
+            hintText: 'Search Pokémon...',
+            hintStyle: GoogleFonts.plusJakartaSans(
+              color: Colors.grey.shade400,
+              fontSize: 15,
+            ),
+            prefixIcon: Icon(
+              Icons.search_rounded,
+              color: Colors.grey.shade400,
+            ),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 14,
+            ),
+          ),
+        ),
       ),
     );
+  }
+
+  @override
+  double get maxExtent => minHeight;
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  bool shouldRebuild(covariant _SearchHeaderDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        topPadding != oldDelegate.topPadding;
   }
 }

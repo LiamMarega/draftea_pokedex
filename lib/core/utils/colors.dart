@@ -95,11 +95,11 @@ class PokedexColors {
 
   /// Returns a lighter/pastel version for card backgrounds
   static Color getCardBackgroundByType(String type) {
-    return getColorByType(type).withOpacity(0.2);
+    return getColorByType(type).withValues(alpha: 0.2);
   }
 
   /// Returns a medium opacity version for chips/badges
   static Color getChipColorByType(String type) {
-    return getColorByType(type).withOpacity(0.85);
+    return getColorByType(type).withValues(alpha: 0.85);
   }
 }

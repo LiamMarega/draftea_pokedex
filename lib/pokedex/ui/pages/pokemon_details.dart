@@ -233,7 +233,7 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage>
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: baseColor.withOpacity(0.4),
+                      color: baseColor.withValues(alpha: 0.4),
                       blurRadius: 40,
                       spreadRadius: 5,
                       offset: const Offset(0, 15),
@@ -284,7 +284,7 @@ class _GlassButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha: 0.25),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Icon(
@@ -360,12 +360,12 @@ class _AboutTab extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: ability.isHidden
                       ? Colors.grey.shade100
-                      : baseColor.withOpacity(0.15),
+                      : baseColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: ability.isHidden
                         ? Colors.grey.shade300
-                        : baseColor.withOpacity(0.3),
+                        : baseColor.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -483,7 +483,7 @@ class _MetricCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -603,7 +603,7 @@ class _AnimatedStatBarState extends State<_AnimatedStatBar>
                       height: 8,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [color, color.withOpacity(0.7)],
+                          colors: [color, color.withValues(alpha: 0.7)],
                         ),
                         borderRadius: BorderRadius.circular(4),
                       ),
@@ -676,9 +676,9 @@ class _SpriteThumbnail extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: color.withOpacity(0.2)),
+            border: Border.all(color: color.withValues(alpha: 0.2)),
           ),
           child: CachedNetworkImage(
             imageUrl: url,
