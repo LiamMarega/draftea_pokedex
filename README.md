@@ -93,6 +93,12 @@ flutter run --flavor development --target lib/main_development.dart
 
 | Home Page | Details Page |
 | :---: | :---: |
+| ![Home Page](./assets/images/screenshots/new_design_home.png) | ![Details Page](./assets/images/screenshots/new_design_details.png) |
+
+### OLD DESIGN
+
+| Home Page | Details Page |
+| :---: | :---: |
 | ![Home Page](./assets/images/screenshots/home_screenshot.png) | ![Details Page](./assets/images/screenshots/details_screenshot.png) |
 
 
