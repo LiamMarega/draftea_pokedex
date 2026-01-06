@@ -1,6 +1,6 @@
 # Draftea Pokedex 📱
 
-[Descargar última versión de Draftea Pokedex by Liam Marega](https://github.com/LiamMarega/draftea_pokedex/releases/tag/production)
+[Descargar última versión de Draftea Pokedex by Liam Marega](https://github.com/LiamMarega/draftea_pokedex/releases/tag/app-new-design)
 
 
 ---
