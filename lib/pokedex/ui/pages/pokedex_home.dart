@@ -174,8 +174,8 @@ class _PokedexHomePageState extends State<PokedexHomePage> {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 200,
           childAspectRatio: 1.3,
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
