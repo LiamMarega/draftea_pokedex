@@ -1,7 +1,6 @@
 # Draftea Pokedex 📱
 
-![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)
-![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+[Descargar última versión de Draftea Pokedex by Liam Marega](https://github.com/LiamMarega/draftea_pokedex/releases/tag/app-new-design)
 
 
 ---
@@ -30,6 +29,7 @@ lib/
 **Clean Architecture** con **BLoC** para el estado. para que que la app sea una web súper compleja, toda la lógica del "Dominio" se queda igual. Solo tendríamos que retocar la capa de UI.
 
 Para que la experiencia en **Web** use el paquete `responsive_grid_list` en la [Home Page](./lib/pokedex/ui/pages/pokedex_home.dart). Esto permite que la grilla de Pokemons se adapte segun el width de la pantalla.
+Para la imagen de fondo de pantalla de la app se uso una original en resolucion vertical, y luego adapte la misma con ayuda de IA para tener la misma en formato horizontal y poder alternar dependiendo el width de la pantalla.
 
 Además, se realizó un **rediseño moderno** de la interfaz con un enfoque en la simplicidad y fluidez visual, priorizando una experiencia de usuario intuitiva y atractiva.
 
@@ -42,8 +42,9 @@ En el [pubspec.yaml](./pubspec.yaml) vas a ver algunas dependencias clave:
 *   **CachedNetworkImage**: Para que las fotos se guarden en caché.
 
 ### 3. Modo offline
+Al entrar en modo offline la aplicacion lo detecta y muestra un cartel.
 primero intentamos obtener los datos de la API para obtener datos actualiazdos, si no los obtenemos, obtenemos los datos de **Hive** guardados en cache anteriormente. 
-Como generalmente los datos en esta api no cambian no implemente un sistema de expiración muy complejo.
+Como generalmente los datos en esta api no cambian no implemente un sistema de expiración complejo.
 
 ### 4. Calidad🧼
 *   **Inversión de dependencias**: No creo los objetos a mano dentro de las clases. Uso `GetIt` para que las piezas encajen solas.
@@ -64,7 +65,7 @@ Ademas obviamente para acelerar el proceso de desarrollo me apoye del uso de  **
 ## 🛠️ Pendientes (Lo que agregaría después)
 1.  **Animaciones**: Sumar efectos de entrada fluidos y animaciones al pasar el mouse (hovers) por las cartas en Web.
 2.  **Búsqueda avanzada**: Filtros por tipos y parámetros de URL para poder compartir un link directo a un Pokemon.
-3.  **DeepLinks**: Configurar el router para que `pokedex.com/pokemon/25` te lleve directo a Pikachu.
+3.  **DeepLinks**: Configurar el router y busquedas por **search params** para poder compartir links directos a pokemones.
 4.  **Tests**: Aunque la arquitectura está lista para testear, agregarle tests unitarios a los Cubits y Repositorios sería el siguiente paso lógico.
 5. **Offline images**: Las imagenes se cachean con la dependencia pero sin conexión no se muestran.
 
@@ -78,11 +79,17 @@ Una aplicación de Pokedex moderna y de alto rendimiento construida con Flutter,
 
 El proyecto está organizado en tres capas principales que siguen la regla de dependencia hacia adentro (la UI y la Data dependen del Dominio, pero el Dominio no depende de nadie).
 
-### 1. Dominio (Domain Layer) 🏛️
-Es el corazón de la aplicación. Contiene la lógica de negocio pura y es totalmente independiente de frameworks o librerías externas.
-- **Entities**: Objetos de negocio puros (`Pokemon`, `PokemonStats`, `PokemonType`).
-- **Use Cases**: Encapsulan la lógica de negocio específica (`GetPokemonListUseCase`, `GetPokemonDetailsUseCase`).
-- **Repositories Interfaces**: Contratos que definen qué datos necesita el dominio, sin saber de dónde vienen.
+Luego, ejecutá este comando para arrancar en modo desarrollo:
+```sh
+flutter run -t lib/main_development.dart --flavor development
+```
+
+Ejecutá este comando para arrancar en modo producción:
+```sh
+flutter run --t lib/main_production.dart --flavor production
+```
+
+---
 
 ### 2. Datos (Data Layer) 💾
 Responsable de la obtención y persistencia de datos.
