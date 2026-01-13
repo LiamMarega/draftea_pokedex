@@ -551,7 +551,7 @@ class _AnimatedStatBarState extends State<_AnimatedStatBar>
   Widget build(BuildContext context) {
     final name = _getShortName(widget.stat.stat?.name ?? '');
     final value = widget.stat.baseStat ?? 0;
-    final maxValue = 255;
+    const maxValue = 255;
     final progress = value / maxValue;
     final color = _getStatColor(name);
 

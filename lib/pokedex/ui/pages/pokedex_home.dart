@@ -232,7 +232,7 @@ class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
   ) {
     return Container(
       color: PokedexColors.backgroundLight,
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         left: 24,
         right: 24,
       ),

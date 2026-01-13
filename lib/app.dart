@@ -23,7 +23,6 @@ class App extends StatelessWidget {
           // Primary color scheme
           colorScheme: ColorScheme.fromSeed(
             seedColor: PokedexColors.primary,
-            brightness: Brightness.light,
           ),
           // Scaffold background
           scaffoldBackgroundColor: PokedexColors.backgroundLight,
