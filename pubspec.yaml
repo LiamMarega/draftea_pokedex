@@ -34,7 +34,7 @@ dev_dependencies:
   freezed: ^3.2.3
   hive_ce_generator: ^1.10.0
   injectable_generator: ^2.9.1
-  json_serializable: ^6.11.2
+  json_serializable: ^6.11.4
   very_good_analysis: ^10.0.0
 
 flutter:
