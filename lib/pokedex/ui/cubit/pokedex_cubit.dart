@@ -29,6 +29,7 @@ class PokedexCubit extends Cubit<PokedexState> {
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   static const int _batchSize = 5;
+  static const int _pageSize = 20;
 
   void _initConnectivityListener() {
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
@@ -55,6 +56,12 @@ class PokedexCubit extends Cubit<PokedexState> {
     }
   }
 
+  int get remainingSkeletons {
+    if (state.expectedCount == 0) return _pageSize;
+    final remaining = state.expectedCount - state.pokemons.length;
+    return remaining > 0 ? remaining : 0;
+  }
+
   bool _isFetching = false;
 
   Future<void> fetchPokemons() async {
@@ -70,6 +77,9 @@ class PokedexCubit extends Cubit<PokedexState> {
       final response = await _repository.getPokemonList(
         offset: state.currentOffset,
       );
+
+      final newExpectedCount = state.expectedCount + response.results.length;
+      emit(state.copyWith(expectedCount: newExpectedCount));
 
       final ids = response.results.map((r) {
         return int.parse(r.url.split('/').where((e) => e.isNotEmpty).last);
@@ -88,8 +98,8 @@ class PokedexCubit extends Cubit<PokedexState> {
         state.copyWith(
           status: PokemonListStatus.success,
           pokemons: [...state.pokemons, ...newPokemons],
-          currentOffset: state.currentOffset + 20,
-          hasReachedMax: newPokemons.isEmpty,
+          currentOffset: state.currentOffset + _pageSize,
+          hasReachedMax: response.next == null,
         ),
       );
     } catch (e) {
