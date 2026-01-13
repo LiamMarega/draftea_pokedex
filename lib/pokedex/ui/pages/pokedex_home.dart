@@ -95,16 +95,16 @@ class _PokedexHomePageState extends State<PokedexHomePage> {
                           ),
                         );
                       }
-                      return _buildPokemonGrid(state);
+                      return _buildGridContainer(state, true);
                     case PokemonListStatus.success:
-                      return _buildPokemonGrid(state);
+                      return _buildGridContainer(state, !state.hasReachedMax);
                     case PokemonListStatus.failure:
                       if (state.pokemons.isEmpty) {
                         return const SliverFillRemaining(
                           child: Center(child: PokedexErrorWidget()),
                         );
                       }
-                      return _buildPokemonGrid(state);
+                      return _buildGridContainer(state, false);
                   }
                 },
               ),
@@ -170,35 +170,43 @@ class _PokedexHomePageState extends State<PokedexHomePage> {
     );
   }
 
-  Widget _buildPokemonGrid(PokedexState state) {
+  Widget _buildGridContainer(PokedexState state, bool showLoader) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 1.3,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            // Show loading indicator at end if more items are available
-            if (index >= state.pokemons.length) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(16),
+      sliver: SliverMainAxisGroup(
+        slivers: [
+          _buildPokemonGrid(state),
+          if (showLoader)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 32),
+                child: Center(
                   child: CircularProgressIndicator(
                     color: PokedexColors.primary,
                     strokeWidth: 2,
                   ),
                 ),
-              );
-            }
-            final pokemon = state.pokemons[index];
-            return PokemonCard(pokemon: pokemon);
-          },
-          childCount: state.pokemons.length + (state.hasReachedMax ? 0 : 0),
-        ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPokemonGrid(PokedexState state) {
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 250,
+        childAspectRatio: 1.2,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final pokemon = state.pokemons[index];
+          return PokemonCard(pokemon: pokemon);
+        },
+        childCount: state.pokemons.length,
       ),
     );
   }
@@ -224,7 +232,7 @@ class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
   ) {
     return Container(
       color: PokedexColors.backgroundLight,
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         left: 24,
         right: 24,
       ),

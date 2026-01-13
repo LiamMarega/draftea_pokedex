@@ -22,8 +22,8 @@ abstract class Pokemon with _$Pokemon {
     return int.parse(segments.last);
   }
 
-  static const double minHeight = 210.0;
-  static const double maxThumbnailHeight = 140.0;
+  static const double minHeight = 210;
+  static const double maxThumbnailHeight = 140;
 }
 
 @freezed

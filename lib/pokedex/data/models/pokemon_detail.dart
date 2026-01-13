@@ -16,9 +16,7 @@ abstract class PokemonDetail with _$PokemonDetail {
     @HiveField(1) required String name,
     @HiveField(2) required Sprites sprites,
     @HiveField(3) required List<PokemonAbility> abilities,
-    @HiveField(4) @Default([]) List<PokemonTypeSlot> types,
-    @HiveField(5) required int height,
-    @HiveField(6) required int weight,
+    @HiveField(5) required int height, @HiveField(6) required int weight, @HiveField(4) @Default([]) List<PokemonTypeSlot> types,
     @HiveField(7) @Default([]) List<PokemonStat> stats,
     @HiveField(8) @JsonKey(name: 'base_experience') int? baseExperience,
   }) = _PokemonDetail;

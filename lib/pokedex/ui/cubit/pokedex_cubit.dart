@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:draftea_pokedex/core/utils/batch_executor.dart';
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 
 import 'package:draftea_pokedex/pokedex/domain/repositories/pokemon_repository.dart';
@@ -27,11 +28,12 @@ class PokedexCubit extends Cubit<PokedexState> {
   final IPokemonRepository _repository;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
+  static const int _batchSize = 5;
+
   void _initConnectivityListener() {
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
       _updateConnectivity,
     );
-    // Check initial state
     Connectivity().checkConnectivity().then(_updateConnectivity);
   }
 
@@ -46,15 +48,20 @@ class PokedexCubit extends Cubit<PokedexState> {
 
   void _onScroll() {
     if (state.hasReachedMax || state.isOffline) return;
-    if (state.scrollController.position.pixels ==
-        state.scrollController.position.maxScrollExtent) {
+    final maxScroll = state.scrollController.position.maxScrollExtent;
+    final currentScroll = state.scrollController.position.pixels;
+    if (currentScroll >= maxScroll - 200) {
       fetchPokemons();
     }
   }
 
+  bool _isFetching = false;
+
   Future<void> fetchPokemons() async {
+    if (_isFetching || state.hasReachedMax) return;
     if (state.isOffline && state.pokemons.isNotEmpty) return;
 
+    _isFetching = true;
     if (state.pokemons.isEmpty) {
       emit(state.copyWith(status: PokemonListStatus.loading));
     }
@@ -63,13 +70,18 @@ class PokedexCubit extends Cubit<PokedexState> {
       final response = await _repository.getPokemonList(
         offset: state.currentOffset,
       );
-      final newPokemons = await Future.wait(
-        response.results.map((r) async {
-          final id = int.parse(
-            r.url.split('/').where((e) => e.isNotEmpty).last,
-          );
-          return _repository.getPokemon(id);
-        }),
+
+      final ids = response.results.map((r) {
+        return int.parse(r.url.split('/').where((e) => e.isNotEmpty).last);
+      }).toList();
+
+      final newPokemons = await BatchExecutor.execute<PokemonDetail>(
+        tasks: ids
+            .map(
+              (id) =>
+                  () => _repository.getPokemon(id),
+            )
+            .toList(),
       );
 
       emit(
@@ -82,8 +94,6 @@ class PokedexCubit extends Cubit<PokedexState> {
       );
     } catch (e) {
       if (state.pokemons.isNotEmpty) {
-        // Keep explicit status but show error in UI/logs?
-        // Or just don't emit failure to prevent screen replacement
         emit(state.copyWith(errorMessage: e.toString()));
       } else {
         emit(
@@ -93,6 +103,8 @@ class PokedexCubit extends Cubit<PokedexState> {
           ),
         );
       }
+    } finally {
+      _isFetching = false;
     }
   }
 
