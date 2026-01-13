@@ -46,15 +46,20 @@ class PokedexCubit extends Cubit<PokedexState> {
 
   void _onScroll() {
     if (state.hasReachedMax || state.isOffline) return;
-    if (state.scrollController.position.pixels ==
-        state.scrollController.position.maxScrollExtent) {
+    final maxScroll = state.scrollController.position.maxScrollExtent;
+    final currentScroll = state.scrollController.position.pixels;
+    if (currentScroll >= maxScroll - 200) {
       fetchPokemons();
     }
   }
 
+  bool _isFetching = false;
+
   Future<void> fetchPokemons() async {
+    if (_isFetching || state.hasReachedMax) return;
     if (state.isOffline && state.pokemons.isNotEmpty) return;
 
+    _isFetching = true;
     if (state.pokemons.isEmpty) {
       emit(state.copyWith(status: PokemonListStatus.loading));
     }
@@ -93,6 +98,8 @@ class PokedexCubit extends Cubit<PokedexState> {
           ),
         );
       }
+    } finally {
+      _isFetching = false;
     }
   }
 
