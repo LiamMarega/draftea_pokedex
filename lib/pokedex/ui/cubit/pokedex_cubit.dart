@@ -27,9 +27,9 @@ class PokedexCubit extends Cubit<PokedexState> {
 
   final IPokemonRepository _repository;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
-  Timer? _debounce;
 
   static const int _batchSize = 5;
+  static const int _pageSize = 20;
 
   void _initConnectivityListener() {
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
@@ -56,28 +56,10 @@ class PokedexCubit extends Cubit<PokedexState> {
     }
   }
 
-  void onSearchChanged(String query) {
-    _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 300), () {
-      final normalizedQuery = query.trim().toLowerCase();
-      emit(state.copyWith(searchQuery: normalizedQuery));
-    });
-  }
-
-  void clearSearch() {
-    _debounce?.cancel();
-    emit(state.copyWith(searchQuery: ''));
-  }
-
-  List<PokemonDetail> get filteredPokemons {
-    if (state.searchQuery.isEmpty) return state.pokemons;
-    return state.pokemons.where((p) {
-      return p.name.toLowerCase().contains(state.searchQuery) ||
-          p.id.toString().contains(state.searchQuery) ||
-          p.types.any(
-            (t) => t.type.name.toLowerCase().contains(state.searchQuery),
-          );
-    }).toList();
+  int get remainingSkeletons {
+    if (state.expectedCount == 0) return _pageSize;
+    final remaining = state.expectedCount - state.pokemons.length;
+    return remaining > 0 ? remaining : 0;
   }
 
   bool _isFetching = false;
@@ -96,6 +78,9 @@ class PokedexCubit extends Cubit<PokedexState> {
         offset: state.currentOffset,
       );
 
+      final newExpectedCount = state.expectedCount + response.results.length;
+      emit(state.copyWith(expectedCount: newExpectedCount));
+
       final ids = response.results.map((r) {
         return int.parse(r.url.split('/').where((e) => e.isNotEmpty).last);
       }).toList();
@@ -113,8 +98,8 @@ class PokedexCubit extends Cubit<PokedexState> {
         state.copyWith(
           status: PokemonListStatus.success,
           pokemons: [...state.pokemons, ...newPokemons],
-          currentOffset: state.currentOffset + 20,
-          hasReachedMax: newPokemons.isEmpty,
+          currentOffset: state.currentOffset + _pageSize,
+          hasReachedMax: response.next == null,
         ),
       );
     } catch (e) {
@@ -135,7 +120,6 @@ class PokedexCubit extends Cubit<PokedexState> {
 
   @override
   Future<void> close() {
-    _debounce?.cancel();
     _connectivitySubscription?.cancel();
     state.scrollController.dispose();
     return super.close();
