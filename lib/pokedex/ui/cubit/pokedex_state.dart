@@ -11,7 +11,7 @@ abstract class PokedexState with _$PokedexState {
     @Default(false) bool hasReachedMax,
     @Default(0) int currentOffset,
     @Default(false) bool isOffline,
-
+    @Default('') String searchQuery,
     String? errorMessage,
   }) = _PokedexState;
 }

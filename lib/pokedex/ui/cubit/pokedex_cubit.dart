@@ -27,6 +27,7 @@ class PokedexCubit extends Cubit<PokedexState> {
 
   final IPokemonRepository _repository;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  Timer? _debounce;
 
   static const int _batchSize = 5;
 
@@ -53,6 +54,30 @@ class PokedexCubit extends Cubit<PokedexState> {
     if (currentScroll >= maxScroll - 200) {
       fetchPokemons();
     }
+  }
+
+  void onSearchChanged(String query) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      final normalizedQuery = query.trim().toLowerCase();
+      emit(state.copyWith(searchQuery: normalizedQuery));
+    });
+  }
+
+  void clearSearch() {
+    _debounce?.cancel();
+    emit(state.copyWith(searchQuery: ''));
+  }
+
+  List<PokemonDetail> get filteredPokemons {
+    if (state.searchQuery.isEmpty) return state.pokemons;
+    return state.pokemons.where((p) {
+      return p.name.toLowerCase().contains(state.searchQuery) ||
+          p.id.toString().contains(state.searchQuery) ||
+          p.types.any(
+            (t) => t.type.name.toLowerCase().contains(state.searchQuery),
+          );
+    }).toList();
   }
 
   bool _isFetching = false;
@@ -110,6 +135,7 @@ class PokedexCubit extends Cubit<PokedexState> {
 
   @override
   Future<void> close() {
+    _debounce?.cancel();
     _connectivitySubscription?.cancel();
     state.scrollController.dispose();
     return super.close();

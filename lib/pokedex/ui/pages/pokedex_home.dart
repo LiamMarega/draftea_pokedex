@@ -1,7 +1,10 @@
 import 'package:draftea_pokedex/core/utils/colors.dart';
+import 'package:draftea_pokedex/core/utils/responsive_grid.dart';
 import 'package:draftea_pokedex/core/widgets/pokedex_error_widget.dart';
+import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
 import 'package:draftea_pokedex/pokedex/ui/cubit/pokedex_cubit.dart';
 import 'package:draftea_pokedex/pokedex/ui/widgets/pokemon_card.dart';
+import 'package:draftea_pokedex/pokedex/ui/widgets/pokemon_card_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,20 +17,26 @@ class PokedexHomePage extends StatefulWidget {
 }
 
 class _PokedexHomePageState extends State<PokedexHomePage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PokedexColors.backgroundLight,
       body: Stack(
         children: [
-          // Main Scrollable Content
           CustomScrollView(
             controller: context.read<PokedexCubit>().state.scrollController,
             physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
             slivers: [
-              // 1. Custom Header (Title + Settings Button)
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(
@@ -63,60 +72,53 @@ class _PokedexHomePageState extends State<PokedexHomePage> {
                   ),
                 ),
               ),
-
-              // 2. Sticky Search Bar
               SliverPersistentHeader(
                 pinned: true,
-
                 delegate: _SearchHeaderDelegate(
                   topPadding: MediaQuery.of(context).padding.top,
                   minHeight: 30 + MediaQuery.of(context).padding.top,
                   maxHeight: 50,
+                  searchController: _searchController,
+                  onSearchChanged: context.read<PokedexCubit>().onSearchChanged,
+                  onClear: () {
+                    _searchController.clear();
+                    context.read<PokedexCubit>().clearSearch();
+                  },
                 ),
               ),
-
-              // 3. Spacer
               const SliverToBoxAdapter(
                 child: SizedBox(height: 16),
               ),
-
-              // 4. Pokemon Grid
               BlocBuilder<PokedexCubit, PokedexState>(
                 builder: (context, state) {
                   switch (state.status) {
                     case PokemonListStatus.initial:
                     case PokemonListStatus.loading:
                       if (state.pokemons.isEmpty) {
-                        return const SliverFillRemaining(
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: PokedexColors.primary,
-                            ),
-                          ),
-                        );
+                        return _buildSkeletonGrid(context);
                       }
-                      return _buildGridContainer(state, true);
+                      return _buildGridContainer(context, state, true);
                     case PokemonListStatus.success:
-                      return _buildGridContainer(state, !state.hasReachedMax);
+                      return _buildGridContainer(
+                        context,
+                        state,
+                        !state.hasReachedMax,
+                      );
                     case PokemonListStatus.failure:
                       if (state.pokemons.isEmpty) {
                         return const SliverFillRemaining(
                           child: Center(child: PokedexErrorWidget()),
                         );
                       }
-                      return _buildGridContainer(state, false);
+                      return _buildGridContainer(context, state, false);
                   }
                 },
               ),
-
-              // 5. Bottom padding for floating nav bar
               const SliverToBoxAdapter(
                 child: SizedBox(height: 120),
               ),
             ],
           ),
-
-          // Offline Banner
           BlocSelector<PokedexCubit, PokedexState, bool>(
             selector: (state) => state.isOffline,
             builder: (context, isOffline) {
@@ -170,13 +172,60 @@ class _PokedexHomePageState extends State<PokedexHomePage> {
     );
   }
 
-  Widget _buildGridContainer(PokedexState state, bool showLoader) {
+  Widget _buildSkeletonGrid(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final columnCount = ResponsiveGrid.getColumnCount(width);
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      sliver: SliverGrid(
+        gridDelegate: ResponsiveGrid.getDelegate(width),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) => const PokemonCardSkeleton(),
+          childCount: columnCount * 3,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGridContainer(
+    BuildContext context,
+    PokedexState state,
+    bool showLoader,
+  ) {
+    final cubit = context.read<PokedexCubit>();
+    final pokemons = cubit.filteredPokemons;
+
+    if (pokemons.isEmpty && state.searchQuery.isNotEmpty) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.search_off_rounded,
+                size: 64,
+                color: Colors.grey.shade400,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No se encontraron Pokémon',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       sliver: SliverMainAxisGroup(
         slivers: [
-          _buildPokemonGrid(state),
-          if (showLoader)
+          _buildPokemonGrid(context, pokemons),
+          if (showLoader && state.searchQuery.isEmpty)
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 32),
@@ -193,36 +242,40 @@ class _PokedexHomePageState extends State<PokedexHomePage> {
     );
   }
 
-  Widget _buildPokemonGrid(PokedexState state) {
+  Widget _buildPokemonGrid(
+    BuildContext context,
+    List<PokemonDetail> pokemons,
+  ) {
+    final width = MediaQuery.of(context).size.width;
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 250,
-        childAspectRatio: 1.2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-      ),
+      gridDelegate: ResponsiveGrid.getDelegate(width),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final pokemon = state.pokemons[index];
+          final pokemon = pokemons[index];
           return PokemonCard(pokemon: pokemon);
         },
-        childCount: state.pokemons.length,
+        childCount: pokemons.length,
       ),
     );
   }
 }
 
-/// Delegate for the sticky search header with SafeArea support
 class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
   _SearchHeaderDelegate({
     required this.minHeight,
     required this.maxHeight,
     required this.topPadding,
+    required this.searchController,
+    required this.onSearchChanged,
+    required this.onClear,
   });
 
   final double minHeight;
   final double maxHeight;
   final double topPadding;
+  final TextEditingController searchController;
+  final ValueChanged<String> onSearchChanged;
+  final VoidCallback onClear;
 
   @override
   Widget build(
@@ -250,16 +303,14 @@ class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
           ],
         ),
         child: TextField(
-          onChanged: (query) {
-            // TODO: Implement search functionality
-            // context.read<PokedexCubit>().onSearchChanged(query);
-          },
+          controller: searchController,
+          onChanged: onSearchChanged,
           style: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             color: PokedexColors.textMain,
           ),
           decoration: InputDecoration(
-            hintText: 'Search Pokémon...',
+            hintText: 'Buscar Pokémon...',
             hintStyle: GoogleFonts.plusJakartaSans(
               color: Colors.grey.shade400,
               fontSize: 15,
@@ -267,6 +318,19 @@ class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
             prefixIcon: Icon(
               Icons.search_rounded,
               color: Colors.grey.shade400,
+            ),
+            suffixIcon: BlocSelector<PokedexCubit, PokedexState, String>(
+              selector: (state) => state.searchQuery,
+              builder: (context, query) {
+                if (query.isEmpty) return const SizedBox.shrink();
+                return IconButton(
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: Colors.grey.shade400,
+                  ),
+                  onPressed: onClear,
+                );
+              },
             ),
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(
