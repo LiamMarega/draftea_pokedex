@@ -71,19 +71,13 @@ Ademas obviamente para acelerar el proceso de desarrollo me apoye del uso de  **
 
 ---
 
-## 🚀 Cómo correr el proyecto
+# 🔴 Draftea Pokedex
 
-Antes de ejecutar el proyecto, es necesario preparar el entorno:
+Una aplicación de Pokedex moderna y de alto rendimiento construida con Flutter, siguiendo los principios de **Clean Architecture** para garantizar escalabilidad, testabilidad y un desacoplamiento total entre la UI y los datos.
 
-1. Generar los archivos de código generado:
-```sh
-dart run build_runner build
-```
+## 🏗️ Arquitectura del Proyecto
 
-2. Instalar las dependencias:
-```sh
-dart pub get
-```
+El proyecto está organizado en tres capas principales que siguen la regla de dependencia hacia adentro (la UI y la Data dependen del Dominio, pero el Dominio no depende de nadie).
 
 Luego, ejecutá este comando para arrancar en modo desarrollo:
 ```sh
@@ -97,16 +91,30 @@ flutter run --t lib/main_production.dart --flavor production
 
 ---
 
-## 📸 Screenshots
+### 2. Datos (Data Layer) 💾
+Responsable de la obtención y persistencia de datos.
+- **Models**: Representaciones de datos para la API o Base de Datos (`PokemonDetail`, `PokemonListResponse`) con lógica de serialización.
+- **Repositories Implementation**: Implementa las interfaces del dominio, coordinando el flujo entre fuentes remotas y locales.
+- **DataSources**: Comunicación directa con APIs (Dio) o persistencia local (Hive).
+- **Mappers**: Transforman modelos de datos en entidades de dominio para evitar filtraciones de la capa de datos hacia la UI.
 
-| Home Page | Details Page |
-| :---: | :---: |
-| ![Home Page](./assets/images/screenshots/new_design_home.png) | ![Details Page](./assets/images/screenshots/new_design_details.png) |
+### 3. Presentación (UI Layer) 🎨
+Se encarga de mostrar la información y reaccionar a las interacciones.
+- **BLoC/Cubit**: Gestión de estado reactiva basada en `flutter_bloc`. Los Cubits ahora dependen de los **Use Cases**, no de los repositorios directamente.
+- **Pages & Widgets**: Componentes visuales desacoplados que consumen únicamente entidades del dominio.
 
-### OLD DESIGN
+## 🛠️ Tecnologías Utilizadas
 
-| Home Page | Details Page |
-| :---: | :---: |
-| ![Home Page](./assets/images/screenshots/home_screenshot.png) | ![Details Page](./assets/images/screenshots/details_screenshot.png) |
+- **Estado**: `flutter_bloc` (Cubit).
+- **Inyección de Dependencias**: `get_it` e `injectable`.
+- **Navegación**: `go_router`.
+- **Networking**: `dio`.
+- **Persistencia**: `hive_ce`.
+- **Modelado**: `freezed` y `equatable`.
+- **UI**: Fuentes de Google (Jakarta Sans) y diseño responsivo.
 
+## 🚀 Mejoras Seleccionadas
 
+- **Desacoplamiento UI-Data**: La vista nunca conoce la estructura de la API.
+- **Batch Processing**: Carga optimizada de detalles de Pokémon utilizando un `BatchExecutor` en la capa de datos.
+- **Clean Domain**: Implementación completa de entidades y casos de uso para una lógica de negocio robusta.

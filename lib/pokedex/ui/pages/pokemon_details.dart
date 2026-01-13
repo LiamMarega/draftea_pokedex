@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draftea_pokedex/core/utils/colors.dart';
-import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
-import 'package:draftea_pokedex/pokedex/data/models/pokemon_stat.dart';
+import 'package:draftea_pokedex/pokedex/domain/entities/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,7 +12,7 @@ class PokemonDetailsPage extends StatefulWidget {
     super.key,
   });
 
-  final PokemonDetail pokemon;
+  final Pokemon pokemon;
   final int id;
 
   @override
@@ -39,8 +38,10 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage>
   @override
   Widget build(BuildContext context) {
     final pokemon = widget.pokemon;
+    // Domain entity 'Pokemon' has 'types' which is a List<PokemonType> enum
+    // Accessing name directly from enum
     final baseColor = pokemon.types.isNotEmpty
-        ? PokedexColors.getColorByType(pokemon.types.first.type.name)
+        ? PokedexColors.getColorByType(pokemon.types.first.name)
         : Colors.grey;
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeight = screenHeight * 0.42;
@@ -146,8 +147,8 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage>
                     // Type Chips
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: pokemon.types.map((typeSlot) {
-                        final typeName = typeSlot.type.name;
+                      children: pokemon.types.map((type) {
+                        final typeName = type.name;
                         final color = PokedexColors.getColorByType(typeName);
                         return Container(
                           margin: const EdgeInsets.symmetric(horizontal: 6),
@@ -304,11 +305,12 @@ class _AboutTab extends StatelessWidget {
     required this.baseColor,
   });
 
-  final PokemonDetail pokemon;
+  final Pokemon pokemon;
   final Color baseColor;
 
   @override
   Widget build(BuildContext context) {
+    // pokemon.height is in decimeters, converted text logic kept same as before but using entity props
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -320,7 +322,7 @@ class _AboutTab extends StatelessWidget {
               Expanded(
                 child: _MetricCard(
                   icon: Icons.fitness_center_rounded,
-                  value: '${(pokemon.weight / 10).toStringAsFixed(1)} kg',
+                  value: '${pokemon.weightInKg.toStringAsFixed(1)} kg',
                   label: 'Weight',
                   color: baseColor,
                 ),
@@ -329,7 +331,7 @@ class _AboutTab extends StatelessWidget {
               Expanded(
                 child: _MetricCard(
                   icon: Icons.straighten_rounded,
-                  value: '${(pokemon.height / 10).toStringAsFixed(1)} m',
+                  value: '${pokemon.heightInMeters.toStringAsFixed(1)} m',
                   label: 'Height',
                   color: baseColor,
                 ),
@@ -372,8 +374,7 @@ class _AboutTab extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      ability.ability.name[0].toUpperCase() +
-                          ability.ability.name.substring(1),
+                      ability.displayName,
                       style: GoogleFonts.plusJakartaSans(
                         color: PokedexColors.textMain,
                         fontWeight: FontWeight.w700,
@@ -412,11 +413,10 @@ class _AboutTab extends StatelessWidget {
                   label: 'Default',
                   color: baseColor,
                 ),
-                if (pokemon.sprites.other?.officialArtwork?.frontDefault !=
-                    null) ...[
+                if (pokemon.sprites.officialArtwork != null) ...[
                   const SizedBox(width: 12),
                   _SpriteThumbnail(
-                    url: pokemon.sprites.other!.officialArtwork!.frontDefault!,
+                    url: pokemon.sprites.officialArtwork!,
                     label: 'Official',
                     color: baseColor,
                   ),
@@ -434,10 +434,20 @@ class _AboutTab extends StatelessWidget {
 class _StatsTab extends StatelessWidget {
   const _StatsTab({required this.pokemon});
 
-  final PokemonDetail pokemon;
+  final Pokemon pokemon;
 
   @override
   Widget build(BuildContext context) {
+    // Helper to map entity stats to list for rendering
+    final statsList = [
+      {'name': 'HP', 'value': pokemon.stats.hp},
+      {'name': 'ATK', 'value': pokemon.stats.attack},
+      {'name': 'DEF', 'value': pokemon.stats.defense},
+      {'name': 'SATK', 'value': pokemon.stats.specialAttack},
+      {'name': 'SDEF', 'value': pokemon.stats.specialDefense},
+      {'name': 'SPD', 'value': pokemon.stats.speed},
+    ];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -452,10 +462,13 @@ class _StatsTab extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ...pokemon.stats.map(
+          ...statsList.map(
             (stat) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: _AnimatedStatBar(stat: stat),
+              child: _AnimatedStatBar(
+                name: stat['name'] as String,
+                value: stat['value'] as int,
+              ),
             ),
           ),
         ],
@@ -515,9 +528,13 @@ class _MetricCard extends StatelessWidget {
 
 /// Animated stat bar with progress fill
 class _AnimatedStatBar extends StatefulWidget {
-  const _AnimatedStatBar({required this.stat});
+  const _AnimatedStatBar({
+    required this.name,
+    required this.value,
+  });
 
-  final PokemonStat stat;
+  final String name;
+  final int value;
 
   @override
   State<_AnimatedStatBar> createState() => _AnimatedStatBarState();
@@ -549,8 +566,8 @@ class _AnimatedStatBarState extends State<_AnimatedStatBar>
 
   @override
   Widget build(BuildContext context) {
-    final name = _getShortName(widget.stat.stat?.name ?? '');
-    final value = widget.stat.baseStat ?? 0;
+    final name = widget.name;
+    final value = widget.value;
     const maxValue = 255;
     final progress = value / maxValue;
     final color = _getStatColor(name);
@@ -616,25 +633,6 @@ class _AnimatedStatBarState extends State<_AnimatedStatBar>
         );
       },
     );
-  }
-
-  String _getShortName(String name) {
-    switch (name) {
-      case 'hp':
-        return 'HP';
-      case 'attack':
-        return 'ATK';
-      case 'defense':
-        return 'DEF';
-      case 'special-attack':
-        return 'SATK';
-      case 'special-defense':
-        return 'SDEF';
-      case 'speed':
-        return 'SPD';
-      default:
-        return name.toUpperCase();
-    }
   }
 
   Color _getStatColor(String name) {

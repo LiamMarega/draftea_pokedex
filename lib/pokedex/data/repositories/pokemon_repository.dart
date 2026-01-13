@@ -1,8 +1,13 @@
+import 'package:draftea_pokedex/core/utils/batch_executor.dart';
 import 'package:draftea_pokedex/pokedex/data/datasources/pokemon_local_datasource.dart';
 import 'package:draftea_pokedex/pokedex/data/datasources/pokemon_remote_datasource.dart';
-import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
+import 'package:draftea_pokedex/pokedex/data/mappers/pokemon_mapper.dart';
+// Import data models, aliasing model.Pokemon to avoid conflict with entity.Pokemon
+import 'package:draftea_pokedex/pokedex/data/models/pokemon.dart' as model;
 import 'package:draftea_pokedex/pokedex/data/models/pokemon_list_response.dart';
+import 'package:draftea_pokedex/pokedex/domain/entities/entities.dart';
 import 'package:draftea_pokedex/pokedex/domain/repositories/pokemon_repository.dart';
+import 'package:draftea_pokedex/pokedex/domain/usecases/usecase.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: IPokemonRepository)
@@ -13,29 +18,57 @@ class PokemonRepository implements IPokemonRepository {
   final IPokemonLocalDataSource _localDataSource;
 
   @override
-  Future<PokemonListResponse> getPokemonList({
+  Future<PokemonListResult> getPokemonList({
     int limit = 20,
     int offset = 0,
   }) async {
     try {
-      // Try to get from cache first
+      final listResponse = await _fetchListResponse(limit, offset);
+
+      final ids = listResponse.results.map((model.Pokemon r) {
+        final uri = Uri.parse(r.url);
+        final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
+        return int.parse(segments.last);
+      }).toList();
+
+      final pokemonDetails = await BatchExecutor.execute<Pokemon>(
+        tasks: ids
+            .map(
+              (id) =>
+                  () => getPokemon(id),
+            )
+            .toList(),
+      );
+
+      return PokemonListResult(
+        pokemons: pokemonDetails,
+        hasMore: listResponse.next != null,
+        total: listResponse.count,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PokemonListResponse> _fetchListResponse(
+    int limit,
+    int offset,
+  ) async {
+    try {
       final cached = await _localDataSource.getCachedPokemonList(offset);
       if (cached != null) {
         return cached;
       }
 
-      // If not in cache, fetch from remote
       final remoteData = await _remoteDataSource.getPokemonList(
         limit: limit,
         offset: offset,
       );
 
-      // Save to cache
       await _localDataSource.cachePokemonList(offset, remoteData);
 
       return remoteData;
     } catch (_) {
-      // If remote fails, try to return cached data anyway (even if it was null before)
       final cached = await _localDataSource.getCachedPokemonList(offset);
       if (cached != null) return cached;
       rethrow;
@@ -43,25 +76,20 @@ class PokemonRepository implements IPokemonRepository {
   }
 
   @override
-  Future<PokemonDetail> getPokemon(int id) async {
+  Future<Pokemon> getPokemon(int id) async {
     try {
-      // Try to get from cache first
       final cached = await _localDataSource.getCachedPokemonDetail(id);
       if (cached != null) {
-        return cached;
+        return PokemonMapper.toEntity(cached);
       }
 
-      // If not in cache, fetch from remote
       final remoteData = await _remoteDataSource.getPokemon(id);
-
-      // Save to cache
       await _localDataSource.cachePokemonDetail(remoteData);
 
-      return remoteData;
+      return PokemonMapper.toEntity(remoteData);
     } catch (_) {
-      // If remote fails, try to return cached data anyway
       final cached = await _localDataSource.getCachedPokemonDetail(id);
-      if (cached != null) return cached;
+      if (cached != null) return PokemonMapper.toEntity(cached);
       rethrow;
     }
   }
