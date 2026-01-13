@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:draftea_pokedex/core/utils/batch_executor.dart';
-import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
-
-import 'package:draftea_pokedex/pokedex/domain/repositories/pokemon_repository.dart';
+import 'package:draftea_pokedex/pokedex/domain/entities/entities.dart';
+import 'package:draftea_pokedex/pokedex/domain/usecases/usecases.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -15,7 +13,8 @@ part 'pokedex_state.dart';
 
 @injectable
 class PokedexCubit extends Cubit<PokedexState> {
-  PokedexCubit(this._repository)
+  // Inject UseCase instead of Repository directly
+  PokedexCubit(this._getPokemonListUseCase)
     : super(
         PokedexState(
           scrollController: ScrollController(),
@@ -25,10 +24,10 @@ class PokedexCubit extends Cubit<PokedexState> {
     _initConnectivityListener();
   }
 
-  final IPokemonRepository _repository;
+  final GetPokemonListUseCase _getPokemonListUseCase;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
-  static const int _batchSize = 5;
+  // The repository handles the batch fetching now, so we just care about pagination
   static const int _pageSize = 20;
 
   void _initConnectivityListener() {
@@ -74,32 +73,24 @@ class PokedexCubit extends Cubit<PokedexState> {
     }
 
     try {
-      final response = await _repository.getPokemonList(
-        offset: state.currentOffset,
-      );
-
-      final newExpectedCount = state.expectedCount + response.results.length;
+      // Calculate expected count for skeleton display logic (optional UI enhancement)
+      final newExpectedCount = state.expectedCount + _pageSize;
       emit(state.copyWith(expectedCount: newExpectedCount));
 
-      final ids = response.results.map((r) {
-        return int.parse(r.url.split('/').where((e) => e.isNotEmpty).last);
-      }).toList();
-
-      final newPokemons = await BatchExecutor.execute<PokemonDetail>(
-        tasks: ids
-            .map(
-              (id) =>
-                  () => _repository.getPokemon(id),
-            )
-            .toList(),
+      // Use the UseCase to get the list of Pokemon entities
+      final result = await _getPokemonListUseCase(
+        PaginationParams(
+          offset: state.currentOffset,
+          limit: _pageSize,
+        ),
       );
 
       emit(
         state.copyWith(
           status: PokemonListStatus.success,
-          pokemons: [...state.pokemons, ...newPokemons],
+          pokemons: [...state.pokemons, ...result.pokemons],
           currentOffset: state.currentOffset + _pageSize,
-          hasReachedMax: response.next == null,
+          hasReachedMax: !result.hasMore,
         ),
       );
     } catch (e) {

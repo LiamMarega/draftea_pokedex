@@ -1,4 +1,4 @@
-import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
+import 'package:draftea_pokedex/pokedex/domain/entities/entities.dart';
 import 'package:draftea_pokedex/pokedex/ui/pages/pokedex_home.dart';
 import 'package:draftea_pokedex/pokedex/ui/pages/pokemon_details.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +22,14 @@ final router = GoRouter(
       path: PokedexRoutes.detail,
       builder: (context, state) {
         final id = state.pathParameters['id']!;
-        final pokemon = state.extra as PokemonDetail?;
+        // Cast to Domain Entity 'Pokemon' instead of Data Model 'PokemonDetail'
+        final pokemon = state.extra as Pokemon?;
+
         if (pokemon == null) {
+          // TODO: Fetch pokemon by ID if extra is null (deep linking support)
           return Scaffold(
-            body: Center(child: Text('Pokemon $id not found')),
+            appBar: AppBar(),
+            body: Center(child: Text('Pokemon $id not found or loaded')),
           );
         }
         return PokemonDetailsPage(id: pokemon.id, pokemon: pokemon);

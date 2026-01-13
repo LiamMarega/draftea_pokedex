@@ -1,15 +1,22 @@
-import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
-import 'package:draftea_pokedex/pokedex/data/models/pokemon_list_response.dart';
+import 'package:draftea_pokedex/pokedex/domain/entities/entities.dart';
+import 'package:draftea_pokedex/pokedex/domain/usecases/usecase.dart';
 
+/// Abstract repository interface for Pokemon data.
+///
+/// This interface is defined in the domain layer and returns domain entities,
+/// keeping the domain completely independent of data layer implementations.
 abstract class IPokemonRepository {
-  Future<PokemonListResponse> getPokemonList({
+  /// Get a paginated list of Pokemon.
+  ///
+  /// Returns a [PokemonListResult] containing the list of [Pokemon] entities,
+  /// whether there are more results, and the total count.
+  Future<PokemonListResult> getPokemonList({
     int limit = 20,
     int offset = 0,
   });
 
-  // Future<List<PokemonDetail>> getPokemonListWithDetails({
-  //   int limit = 20,
-  //   int offset = 0,
-  // });
-  Future<PokemonDetail> getPokemon(int id);
+  /// Get a single Pokemon by its ID.
+  ///
+  /// Returns a [Pokemon] domain entity.
+  Future<Pokemon> getPokemon(int id);
 }

@@ -7,7 +7,8 @@ abstract class PokedexState with _$PokedexState {
   const factory PokedexState({
     required ScrollController scrollController,
     @Default(PokemonListStatus.initial) PokemonListStatus status,
-    @Default([]) List<PokemonDetail> pokemons,
+    // Updated to use Domain Entity 'Pokemon' instead of Data Model 'PokemonDetail'
+    @Default([]) List<Pokemon> pokemons,
     @Default(false) bool hasReachedMax,
     @Default(0) int currentOffset,
     @Default(false) bool isOffline,

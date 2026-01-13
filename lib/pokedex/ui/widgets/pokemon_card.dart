@@ -1,8 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draftea_pokedex/core/router/route.dart';
 import 'package:draftea_pokedex/core/utils/colors.dart';
-import 'package:draftea_pokedex/pokedex/data/models/pokemon_detail.dart';
-import 'package:flutter/foundation.dart';
+import 'package:draftea_pokedex/pokedex/domain/entities/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,12 +12,12 @@ class PokemonCard extends StatelessWidget {
     super.key,
   });
 
-  final PokemonDetail pokemon;
+  final Pokemon pokemon;
 
   @override
   Widget build(BuildContext context) {
     final typeName = pokemon.types.isNotEmpty
-        ? pokemon.types.first.type.name
+        ? pokemon.types.first.name
         : 'normal';
     final color = PokedexColors.getColorByType(typeName);
 
@@ -88,12 +87,12 @@ class PokemonCard extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: PokedexColors.getChipColorByType(
-                                t.type.name,
+                                t.name,
                               ),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              t.type.name,
+                              t.name,
                               style: GoogleFonts.plusJakartaSans(
                                 color: Colors.white,
                                 fontSize: 10,
@@ -133,54 +132,6 @@ class PokemonCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PokemonImage extends StatelessWidget {
-  const _PokemonImage({
-    required this.url,
-    required this.size,
-  });
-
-  final String url;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.network(
-      url,
-      height: size,
-      width: size,
-      fit: BoxFit.contain,
-      cacheHeight: kIsWeb ? null : (size * 2).toInt(),
-      cacheWidth: kIsWeb ? null : (size * 2).toInt(),
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return SizedBox(
-          height: size,
-          width: size,
-          child: Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                  : null,
-              color: PokedexColors.primary.withValues(alpha: 0.5),
-            ),
-          ),
-        );
-      },
-      errorBuilder: (context, error, stackTrace) => SizedBox(
-        height: size,
-        width: size,
-        child: const Icon(
-          Icons.catching_pokemon,
-          size: 40,
-          color: Colors.grey,
         ),
       ),
     );

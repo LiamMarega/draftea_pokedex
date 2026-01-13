@@ -12,6 +12,7 @@ dependencies:
   cached_network_image: ^3.4.1
   connectivity_plus: ^7.0.0
   dio: ^5.9.0
+  equatable: ^2.0.8
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
